@@ -126,7 +126,7 @@ EOF on input
 
 Exercise 1.6:
 1.
-e m a c s C-x b Enter
+C-x b Enter
 
 2.
 ( r a n d o m SP " 5 0 5 - 1 1 1 - 8 0 6 " ) C-j
