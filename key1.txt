@@ -121,7 +121,7 @@ M-x c o m p i l e Enter h e l l o . c SP hello y
 M-! . / h e l l o Enter C-x C-b C-x o C-n C-n C-n C-n Enter C-x C-w h e l l o - o u t
 
 5.
-C-x i backspace backspace backspace backspace backspace k e y 1 . t x t Enter C-@ C-a C-w M-> C-y
+C-x i backspace backspace backspace backspace backspace k e y 1 . t x t Enter C-@ C-a C-w M-> C-y C-x C-w backspace backspace backspace backspace backspace k e y 1 . t x t Enter y
 EOF on input
 
 Exercise 1.6:
