@@ -30,7 +30,7 @@ command: "readlink /usr/bin/emacs"
 5.
 command: "/usr/bin/gcc --version"
 version of /usr/bin/gcc: 4.8.5
-command: gcc --version"
+command: "gcc --version"
 version of plain gcc: 8.3.0
 
 They are different programs because the system will look at directory in PATH variable first when the path of the program is not specified

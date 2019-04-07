@@ -115,7 +115,7 @@ M-x c d Enter j u n k Enter C-x C-f h e l l o . c Enter
 copy-code-into-file
 
 3.
-M-x c o m p i l e Enter hello.c SP hello y
+M-x c o m p i l e Enter h e l l o . c SP hello y
 
 4.
 M-! . / h e l l o Enter C-x C-b C-x o C-n C-n C-n C-n Enter C-x C-w h e l l o - o u t
