@@ -1,0 +1,93 @@
+1.
+command: locale
+LC_CTYPE="en_US.UTF-8"
+command: export LC_ALL='C'
+Set LC_CTYPE to "C"
+
+2.
+command: sort -o words /usr/share/dict/words
+Sort the file /usr/share/dict/words, and put the result into the file named words.
+
+3.
+command: wget http://web.cs.ucla.edu/classes/spring19/cs35L/assign/assign2.html
+Download the HTML of the assignment webpage, the HTML file is in assign2.html
+
+4.
+command: tr -c 'A-Za-z' '[\n*]' < assign2.html
+This command replaces every non-alphabetic character in the file with a newline character '\n'. The first argument 'A-Za-z' means all letters, and because option -c, the first argument becomes the complement of 'A-Za-z' which is all non-alphabetic characters. The second argument is the characters to replace with. '[\n*]' means copy \n until its length is the same as the first argument, which is 1.
+
+5.
+command: tr -cs 'A-Za-z' '[\n*]' < assign2.html
+This command replaces multiple \n by one single \n. The only change from the first command is the -s option, which replaces a repeated occurrence of a character in the second argument (\n) with a single occurrence of that character.
+
+6.
+command: tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort 
+Words are printed in ascending order. The output of tr is piped into sort command, so the output of tr is sorted and printed in ascending order.
+
+7.
+command: tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u
+All repeated words are replaced by only one occurence. The sort option -u make sort command output only one of the word that has multiple occurences.
+
+8.
+command: tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | sort -u | comm - words
+The command compares the output in command #7 with the "words" file, and output three columns: 
+the first column is words that is unique to the HTML, 
+the second column is words unique to "words", 
+the third column is words that apprear in both. 
+the argument "-" represents the standard input, which in this case is the output of sort
+
+9.
+command: tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | comm -23 - words # ENGLISHCHECKER
+This command only output the first column, which is a list of words unique to the HTML.
+
+10.
+command: wget https://www.mauimapp.com/moolelo/hwnwdshw.htm
+Download the HTML of the webpage as the file hwnwdshw.htm
+
+11.
+command: sed -i 's/\?//g' hwnwdshw.htm
+command: sed -i 's/<u>//g' hwnwdshw.htm
+command: sed -i 's/<\/u>//g' hwnwdshw.htm
+Remove every instance of "?", "<u>" and "</u>"
+
+12.
+script of buildwords
+#! /bin/sh
+tr '[:upper:]' '[:lower:]' | sed "s/\`/\'/g" | awk "/^\s*<td>[pk'mnwlhaeiou\s]*<\/td>\s*$/ {print;}" | sed 's/<[^>]*>//g' | sed 's/^\s*//g' | sed 's/\s*$//g' | sort -u
+
+13.
+command: cat hwnwdshw.htm | sh buildwords > hwords
+run buildwords on hwnwdshw.htm and write a sort list of Hawaiian words to the file "hwords"
+
+14.
+command: tr -cs 'A-Za-z' '[\n*]' < assign2.html | tr '[:upper:]' '[:lower:]' | sort -u | comm -23 - hwords > HAWAIIANCHECKER
+Run the hawaiian checker and write the output to the file "HAWAIIANCHECKER"
+
+command: tr -cs 'A-Za-z' '[\n*]' < assign2.html | tr '[:upper:]' '[:lower:]' | sort -u | comm -23 - words > ENGLISHCHECKER
+Run the english checker and write the output to the file "ENGLISHCHECKER"
+
+15.
+command: comm -12 ENGLISHCHECKER HAWAIIANCHECKER | wc -l
+Count the number of identical words in ENGLISHCHECKER and HAWAIIANCHECKER. This command output words that appear in both ENGLISHCHECKER and HAWAIIANCHECKER, and as they are seperated by newline char, I could use wc -l to output the number of newline chars, which is equal to the number of identical words.
+
+39 words
+
+command: comm -23 ENGLISHCHECKER HAWAIIANCHECKER | wc -l
+The same reason as above except writes the number of words in the first column (words reported by ENGLISHCHECKER but not HAWAIIANCHECKER)
+
+2 words
+command: comm -23 ENGLISHCHECKER HAWAIIANCHECKER
+This command writes words in the first column
+Two examples:
+(this is a empty line)
+wiki
+
+command: comm -13 ENGLISHCHECKER HAWAIIANCHECKER | wc -l
+Writes the number of words in the second column (words reported by HAWAIIANCHECKER but not ENGLISHCHECKER)
+441 words
+
+command: comm -13 ENGLISHCHECKER HAWAIIANCHECKER
+This command writes words in the second column
+Two examples:
+were
+what
