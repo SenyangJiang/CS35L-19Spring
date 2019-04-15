@@ -6,39 +6,55 @@ Set LC_CTYPE to "C"
 
 2.
 command: sort -o words /usr/share/dict/words
-Sort the file /usr/share/dict/words, and put the result into the file named words.
+Sort the file /usr/share/dict/words, 
+and put the result into the file "words".
 
 3.
-command: wget http://web.cs.ucla.edu/classes/spring19/cs35L/assign/assign2.html
-Download the HTML of the assignment webpage, the HTML file is in assign2.html
+command: wget 
+http://web.cs.ucla.edu/classes/spring19/cs35L/assign/assign2.html
+Download the HTML of the assignment webpage
 
 4.
 command: cat assign2.html | tr -c 'A-Za-z' '[\n*]'
-This command replaces every non-alphabetic character in the file with a newline character '\n'. The first argument 'A-Za-z' means all letters, and because option -c, the first argument becomes the complement of 'A-Za-z' which is all non-alphabetic characters. The second argument is the characters to replace with. '[\n*]' means copy \n until its length is the same as the first argument, which is 1.
+This command replaces every non-alphabetic character with '\n'.
+The first argument 'A-Za-z' means all letters, and because option -c, 
+it becomes the complement which is all non-alphabetic characters.
+The second argument is the characters to replace with. 
+'[\n*]' means copy \n until its length is the same as the first argument.
 
 5.
 command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]'
-This command replaces multiple \n by one single \n. The only change from the first command is the -s option, which replaces repeated occurrence of a character in the second argument (\n) with a single occurrence of that character.
+This command replaces multiple \n by one single \n. 
+The only change from the first command is the -s (squeeze) option, 
+it replaces repeated occurrence of a character in the second argument (\n)
+with a single occurrence of that character.
 
 6.
 command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort 
-Words are printed in ascending order. The output of tr is piped into sort command, so the output of tr is sorted and printed in ascending order.
+Words are printed in ascending order. 
+The output of tr is piped into sort command, 
+so the output of tr is sorted and printed in ascending order.
 
 7.
 command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u
-All repeated words are replaced by only one occurence. The sort option -u make sort command output only one of the word that has multiple occurences.
+All repeated words are replaced by only one occurence.
+The sort option -u (unique) makes it output only one of repeated word.
 
 8.
 command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u | comm - words
-The command compares the output in command #7 with the "words" file, and output three columns: 
+The command compares the output in command #7 with the "words" file, 
+and output three columns: 
 the first column is words that is unique to the HTML, 
 the second column is words unique to "words" file, 
 the third column is words that appear in both. 
-the argument "-" represents the standard input, which in this case is the output of sort
+the argument "-" represents the standard input, 
+which in this case is the output of sort
 
 9.
-command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | comm -23 - words # ENGLISHCHECKER
-This command only output the first column, which is a list of words unique to the HTML.
+command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]' < assign2.html | 
+sort -u | comm -23 - words # ENGLISHCHECKER
+This command only output the first column, 
+which is a list of words unique to the HTML.
 
 10.
 command: wget https://www.mauimapp.com/moolelo/hwnwdshw.htm
@@ -88,13 +104,16 @@ make this file executable
 
 13.
 command: cat hwnwdshw.htm | ./buildwords > hwords
-run buildwords on hwnwdshw.htm and write a sort list of Hawaiian words to the file "hwords"
+run buildwords on hwnwdshw.htm
+and write a sort list of Hawaiian words to the file "hwords"
 
 14.
-command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | tr '[:upper:]' '[:lower:]' | sort -u | comm -23 - hwords > HAWAIIANCHECKER
+command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | 
+tr '[:upper:]' '[:lower:]' | sort -u | comm -23 - hwords > HAWAIIANCHECKER
 Run the hawaiian checker and write the output to the file "HAWAIIANCHECKER"
 
-command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | tr '[:upper:]' '[:lower:]' | sort -u | comm -23 - words > ENGLISHCHECKER
+command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | 
+tr '[:upper:]' '[:lower:]' | sort -u | comm -23 - words > ENGLISHCHECKER
 Run the english checker and write the output to the file "ENGLISHCHECKER"
 
 command: comm -23 hwords hwords
@@ -102,25 +121,27 @@ This command runs the hawaiian checker on itself and output nothing
 
 15.
 command: emacs ENGLISHCHECKER
-Count the number of words in ENGLISHCHECKER directly using the line count. The first line is empty so it is excluded.
+Count the number of words in ENGLISHCHECKER directly using the line count. 
+The first line is empty so it is excluded.
 
 40 words
-If we count the empty line it would be 41 words.
 
 command: emacs HAWAIIANCHECKER
-Count the number of words in HAWAIIANCHECKER directly using the line count. The first line is empty so it is excluded.
+Count the number of words in HAWAIIANCHECKER directly using the line count. 
+The first line is empty so it is excluded.
 
 477 words
-If we count the empty line it would be 478 words.
+
 
 command: comm -12 ENGLISHCHECKER HAWAIIANCHECKER | wc -l
-Writes the number of misspelled words reported by both, the first line is empty so it is excluded.
+Writes the number of misspelled words reported by both
+the first line is empty so it is excluded.
 
 38 words
-If we count the empty line it would be 39 words
 
 command: comm -23 ENGLISHCHECKER HAWAIIANCHECKER | wc -l
-Writes the number of words in the first column (words reported by ENGLISHCHECKER but not HAWAIIANCHECKER)
+Writes the number of words in the first column 
+(words reported by ENGLISHCHECKER but not HAWAIIANCHECKER)
 
 2 words
 
@@ -131,7 +152,9 @@ lau
 wiki
 
 command: comm -13 ENGLISHCHECKER HAWAIIANCHECKER | wc -l
-Writes the number of words in the second column (words reported by HAWAIIANCHECKER but not ENGLISHCHECKER)
+Writes the number of words in the second column 
+(words reported by HAWAIIANCHECKER but not ENGLISHCHECKER)
+
 439 words
 
 command: comm -13 ENGLISHCHECKER HAWAIIANCHECKER
