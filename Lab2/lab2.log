@@ -61,15 +61,18 @@ command: wget https://www.mauimapp.com/moolelo/hwnwdshw.htm
 Download the HTML of the webpage as the file hwnwdshw.htm
 
 11.
-command: sed -i 's/\?//g' hwnwdshw.htm
-command: sed -i 's/<u>//g' hwnwdshw.htm
-command: sed -i 's/<\/u>//g' hwnwdshw.htm
-Remove every instance of "?", "<u>" and "</u>"
-
-12.
-command: emacs buildwords
-script of buildwords:
+command: emacs buildwords.sh
+script of buildwords.sh:
 #! /bin/sh
+sed 's/\?//g' |
+# remove every '?'
+
+sed 's/<u>//g' |
+# remove every '<u>'
+
+sed 's/<\/u>//g' |
+# remove every '</u>'
+
 tr '[:upper:]' '[:lower:]' |
 # change every upper case to lowercase
 
@@ -99,15 +102,15 @@ sort -u
 
 then exit emacs
 
-command: chomd +x buildwords
+command: chomd +x buildwords.sh
 make this file executable
 
-13.
-command: cat hwnwdshw.htm | ./buildwords > hwords
-run buildwords on hwnwdshw.htm
+12.
+command: cat hwnwdshw.htm | ./buildwords.sh > hwords
+run buildwords.sh on hwnwdshw.htm
 and write a sort list of Hawaiian words to the file "hwords"
 
-14.
+13.
 command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | 
 tr '[:upper:]' '[:lower:]' | sort -u | comm -23 - hwords > HAWAIIANCHECKER
 Run the hawaiian checker and write the output to the file "HAWAIIANCHECKER"
@@ -119,7 +122,7 @@ Run the english checker and write the output to the file "ENGLISHCHECKER"
 command: comm -23 hwords hwords
 This command runs the hawaiian checker on itself and output nothing
 
-15.
+14.
 command: emacs ENGLISHCHECKER
 Count the number of words in ENGLISHCHECKER directly using the line count. 
 The first line is empty so it is excluded.
