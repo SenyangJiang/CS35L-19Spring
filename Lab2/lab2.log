@@ -111,9 +111,10 @@ run buildwords.sh on hwnwdshw.htm
 and write a sort list of Hawaiian words to the file "hwords"
 
 13.
-command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | 
+command: cat assign2.html | tr -cs "A-Za-z'" '[\n*]' | 
 tr '[:upper:]' '[:lower:]' | sort -u | comm -23 - hwords > HAWAIIANCHECKER
 Run the hawaiian checker and write the output to the file "HAWAIIANCHECKER"
+notice apostrophe is included when extracting words from the HTML
 
 command: cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | 
 tr '[:upper:]' '[:lower:]' | sort -u | comm -23 - words > ENGLISHCHECKER
@@ -133,20 +134,19 @@ command: emacs HAWAIIANCHECKER
 Count the number of words in HAWAIIANCHECKER directly using the line count. 
 The first line is empty so it is excluded.
 
-477 words
-
+492 words
 
 command: comm -12 ENGLISHCHECKER HAWAIIANCHECKER | wc -l
 Writes the number of misspelled words reported by both
 the first line is empty so it is excluded.
 
-38 words
+36 words
 
 command: comm -23 ENGLISHCHECKER HAWAIIANCHECKER | wc -l
 Writes the number of words in the first column 
 (words reported by ENGLISHCHECKER but not HAWAIIANCHECKER)
 
-2 words
+4 words
 
 command: comm -23 ENGLISHCHECKER HAWAIIANCHECKER
 This command writes words in the first column
@@ -158,7 +158,7 @@ command: comm -13 ENGLISHCHECKER HAWAIIANCHECKER | wc -l
 Writes the number of words in the second column 
 (words reported by HAWAIIANCHECKER but not ENGLISHCHECKER)
 
-439 words
+456 words
 
 command: comm -13 ENGLISHCHECKER HAWAIIANCHECKER
 This command writes words in the second column
