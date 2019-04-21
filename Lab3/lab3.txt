@@ -1,0 +1,79 @@
+1.
+command: wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz
+command: wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz.sig
+command: wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
+Download coreutils-8.29 tarball, the signature and GNU keystring
+
+command: gpg --verify --keyring ./gnu-keyring.gpg coreutils-8.29.tar.xz.sig
+The signature is verified without running into problems
+
+2. 
+command: tar -xJvf coreutils-8.29.tar.xz
+unzip the tarball
+
+command: mkdir ~/coreutilsInstall
+make a directory for installing coreutils
+
+command: cd coreutils-8.29
+go to the directory of unzipped coreuntils files
+
+command: emacs INSTALL
+read the '--prefix' flag under the 'configure invocation' section
+
+command: ./configure --prefix=/u/eng/class/classsen/coreutilsInstall
+run the configure script using the prefix flag with directory /u/eng/class/classsen/coreutilsInstall
+
+command: make
+compile the files
+
+command: make install
+install files to the directory /u/eng/class/classsen/coreutilsInstall
+
+3.
+command: cd ~/coreutilsInstall/bin
+go into the directory of the installed binary file of coreutils-8.29
+
+command: ./ls -a -A
+The bug causes this command to output file names including . and .. (the home and parent directory)
+
+The first two lines of output are:
+ .          csplit      fold      mktemp     readlink    stat       uname
+ ..         cut         groups    mv         realpath    stdbuf    unexpand
+4.
+command: cd ~/coreutils-8.29
+go to the directory that contains the source file
+
+Then copy the content of the patch into a file called 'lspatch'
+
+command: patch -p1 <lspatch
+It creates the following massage:
+Hunk #1 FAILED at 4.
+1 out of 1 hunk FAILED -- saving rejects to file NEWS.rej
+patching file src/ls.c
+Hunk #1 succeeded at 1900 (offset -3 lines).
+patching file tests/local.mk
+patching file tests/ls/a-option.sh
+
+The NEWS file patching failed because no file with this name exists in the directory
+Apart from this, the message shows that the patching is successful
+
+5.
+command: autoreconf
+remake GNU build system files that are older than their sources.
+In this case, src/ls.c, tests/local.mk, tests/ls/a-option.sh are updated by the patch
+So we need to run autoreconf to remake these files
+
+command: make
+build the fixed version
+
+command: cd src
+Enter the source file directory where the modfied ls command is located
+
+6.
+command: ./ls -a -A
+This command does not output . and ..
+so the bug has been fixed by the patch
+
+the first two lines of output are:
+'['                         nice.c
+ b2sum                      nice.o
