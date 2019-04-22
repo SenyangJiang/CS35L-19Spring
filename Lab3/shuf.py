@@ -84,6 +84,9 @@ With no FILE, or when FILE is -, read standard input."""
                  format(sys.argv[0], input_file, strerror))
 
     if options.repeat:
+        if len(lines) == 0:
+            sys.exit("{0}: no lines to repeat".
+                     format(sys.argv[0]))
         if head_count != None:
             for i in range(head_count):
                 sys.stdout.write(random.choice(lines))
