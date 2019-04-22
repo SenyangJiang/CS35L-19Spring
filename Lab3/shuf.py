@@ -3,12 +3,12 @@
 
 import argparse, string, random, sys 
 def main():
-    usage_msg = """./shuf.py [OPTION]... FILE
-  or:  ./shuf.py -i LO-HI [OPTION]...
+    usage_msg = """{0} [OPTION]... FILE
+  or:  {0} -i LO-HI [OPTION]...
 
 Write a random permutation of the input lines to standard output.
 
-With no FILE, or when FILE is -, read standard input."""
+With no FILE, or when FILE is -, read standard input.""".format(sys.argv[0])
     
     parser = argparse.ArgumentParser(usage=usage_msg)
     parser.add_argument("-i", "--input-range", action="store", metavar="LO-HI", dest="input_range", help="treat each number LO through HI as an input line")
@@ -64,24 +64,20 @@ With no FILE, or when FILE is -, read standard input."""
             sys.stdout.write(str(values[i])+'\n')
         return 0
     
-    if len(args) == 0:
-        input_file = sys.stdin
-    elif len(args) > 1:
+    if len(args) > 1:
         sys.exit("{0}: extra operand '{1}'".
                  format(sys.argv[0], args[1]))
-    elif args[0] == "-":
-        input_file = sys.stdin
+    elif len(args) == 0 or args[0] == "-":
+        lines = sys.stdin.readlines()
     else:
-        input_file = args[0]
-
-    try:
-        f = open(input_file, 'r')
-        lines = f.readlines()
-        f.close()
-    except IOError as e:
-        errno, strerror = e.args
-        sys.exit("{0}: {1}: {2}".
-                 format(sys.argv[0], input_file, strerror))
+        try:
+            f = open(input_file, 'r')
+            lines = f.readlines()
+            f.close()
+        except IOError as e:
+            errno, strerror = e.args
+            sys.exit("{0}: {1}: {2}".
+                     format(sys.argv[0], input_file, strerror))
 
     if options.repeat:
         if len(lines) == 0:
