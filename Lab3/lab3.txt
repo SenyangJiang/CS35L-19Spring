@@ -1,3 +1,16 @@
+We start by verifying that the problem still occurs in /usr/bin/ls
+command: /usr/bin/ls -a -A
+the first two lines of output are:
+.                          coreutilsInstall  hwords     .profile~
+..                         .cshrc            junk       proj1
+
+we can see . and .. are printed, so the problem still occurs in /usr/bin/ls
+
+We next check the version of /usr/bin/ls
+command: /usr/bin/ls --version
+ls (GNU coreutils) 8.22
+so the Coreutils version is 8.22
+
 1.
 command: wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz
 command: wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz.sig
@@ -5,7 +18,16 @@ command: wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
 Download coreutils-8.29 tarball, the signature and GNU keystring
 
 command: gpg --verify --keyring ./gnu-keyring.gpg coreutils-8.29.tar.xz.sig
-The signature is verified without running into problems
+gpg: Signature made Wed 27 Dec 2017 10:29:05 AM PST using RSA key ID 306037D9
+gpg: Good signature from "Pádraig Brady <P@draigBrady.com>"
+gpg:                 aka "Pádraig Brady <pbrady@redhat.com>"
+gpg:                 aka "Pádraig Brady <pixelbeat@gnu.org>"
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: 6C37 DC12 121A 5006 BC1D  B804 DF6F D971 3060 37D9
+
+This output contains a warning that this key is not certified with a trusted signature,
+because I have not marked the key as trusted
 
 2. 
 command: tar -xJvf coreutils-8.29.tar.xz
@@ -39,6 +61,7 @@ The bug causes this command to output file names including . and .. (the home an
 The first two lines of output are:
  .          csplit      fold      mktemp     readlink    stat       uname
  ..         cut         groups    mv         realpath    stdbuf    unexpand
+
 4.
 command: cd ~/coreutils-8.29
 go to the directory that contains the source file
