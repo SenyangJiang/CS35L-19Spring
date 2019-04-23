@@ -26,7 +26,7 @@ gpg: WARNING: This key is not certified with a trusted signature!
 gpg:          There is no indication that the signature belongs to the owner.
 Primary key fingerprint: 6C37 DC12 121A 5006 BC1D  B804 DF6F D971 3060 37D9
 
-This output contains a warning that this key is not certified with a trusted signature,
+There is a warning that this key is not certified with a trusted signature,
 because I have not marked the key as trusted
 
 2. 
@@ -43,7 +43,7 @@ command: emacs INSTALL
 read the '--prefix' flag under the 'configure invocation' section
 
 command: ./configure --prefix=/u/eng/class/classsen/coreutilsInstall
-run the configure script using the prefix flag with directory /u/eng/class/classsen/coreutilsInstall
+run the configure script using the prefix flag with directory to install
 
 command: make
 compile the files
@@ -56,7 +56,7 @@ command: cd ~/coreutilsInstall/bin
 go into the directory of the installed binary file of coreutils-8.29
 
 command: ./ls -a -A
-The bug causes this command to output file names including . and .. (the home and parent directory)
+The bug causes this command to output file names including . and ..
 
 The first two lines of output are:
  .          csplit      fold      mktemp     readlink    stat       uname
@@ -77,13 +77,13 @@ Hunk #1 succeeded at 1900 (offset -3 lines).
 patching file tests/local.mk
 patching file tests/ls/a-option.sh
 
-The NEWS file patching failed because no file with this name exists in the directory
+The NEWS file patching failed because no file with this name exists
 Apart from this, the message shows that the patching is successful
 
 5.
 command: autoreconf
 remake GNU build system files that are older than their sources.
-In this case, src/ls.c, tests/local.mk, tests/ls/a-option.sh are updated by the patch
+In this case, ls.c, local.mk, a-option.sh are updated by the patch
 So we need to run autoreconf to remake these files
 
 command: make

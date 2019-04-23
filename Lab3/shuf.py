@@ -11,9 +11,13 @@ Write a random permutation of the input lines to standard output.
 With no FILE, or when FILE is -, read standard input.""".format(sys.argv[0])
     
     parser = argparse.ArgumentParser(usage=usage_msg)
-    parser.add_argument("-i", "--input-range", action="store", metavar="LO-HI", dest="input_range", help="treat each number LO through HI as an input line")
-    parser.add_argument("-n", "--head-count", action="store", metavar="COUNT", dest="head_count", help="output at most COUNT lines")
-    parser.add_argument("-r", "--repeat", action="store_true", help="output lines can be repeated")
+    parser.add_argument("-i", "--input-range", action="store", metavar="LO-HI",\
+        dest="input_range",\
+        help="treat each number LO through HI as an input line")
+    parser.add_argument("-n", "--head-count", action="store", metavar="COUNT",\
+        dest="head_count", help="output at most COUNT lines")
+    parser.add_argument("-r", "--repeat", action="store_true",\
+                        help="output lines can be repeated")
 
     options, args = parser.parse_known_args()
     
@@ -43,11 +47,14 @@ With no FILE, or when FILE is -, read standard input.""".format(sys.argv[0])
         except:
             sys.exit("{0}: invalid input range: '{1}'".
                      format(sys.argv[0], options.input_range))
-        if LO > HI:
+        if LO > HI+1:
             sys.exit("{0}: invalid input range: '{1}'".
                      format(sys.argv[0], options.input_range))
         values = list(range(LO,HI+1))
         if options.repeat:
+            if len(values) == 0 and head_count != 0:
+                sys.exit("{0}: no lines to repeat".
+                         format(sys.argv[0]))
             if head_count != None:
                 for i in range(head_count):
                     sys.stdout.write(str(random.choice(values))+'\n')
@@ -71,16 +78,16 @@ With no FILE, or when FILE is -, read standard input.""".format(sys.argv[0])
         lines = sys.stdin.readlines()
     else:
         try:
-            f = open(input_file, 'r')
+            f = open(args[0], 'r')
             lines = f.readlines()
             f.close()
         except IOError as e:
             errno, strerror = e.args
             sys.exit("{0}: {1}: {2}".
-                     format(sys.argv[0], input_file, strerror))
+                     format(sys.argv[0], args[0], strerror))
 
     if options.repeat:
-        if len(lines) == 0:
+        if len(lines) == 0 and head_count != 0:
             sys.exit("{0}: no lines to repeat".
                      format(sys.argv[0]))
         if head_count != None:

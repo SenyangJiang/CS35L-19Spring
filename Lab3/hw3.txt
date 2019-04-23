@@ -1,23 +1,31 @@
 Q1.
-The patch solves the problem of -a overriding -A when using ls -a -A, and the unexpected behavior is eliminated, so it improves the performace of ls.
+The patch solves the problem of -a overriding -A when using ls -a -A
+the unexpected behavior is eliminated, so it improves the performace of ls.
 
 Q2.
-we need to watch out for any ls commands that involves using -a and -A together, because the behavior of this combination is different (-a no longer overrides -A). So this new version of Coreutils might break applications that include searching for current and parent directories.
+we need to watch out for any ls commands that involves using -a and -A together
+because this combination's behavior is different (-a no longer overrides -A)
+So this new version of Coreutils might break applications
+that include searching for current and parent directories.
 
 Q3.
 It produces the following error message:
 Traceback (most recent call last):
-  File "randline.py", line 70, in <module>
-    main()
-  File "randline.py", line 64, in main
-    sys.stdout.write(generator.chooseline())
-  File "randline.py", line 34, in chooseline
-    return random.choice(self.lines)
-  File "/usr/local/cs/Python-2.7.15/lib/python2.7/random.py", line 277, in choice
-    return seq[int(self.random() * len(seq))]  # raises IndexError if seq is empty
+File "randline.py", line 70, in <module>
+  main()
+File "randline.py", line 64, in main
+  sys.stdout.write(generator.chooseline())
+File "randline.py", line 34, in chooseline
+  return random.choice(self.lines)
+File "/usr/local/cs/Python-2.7.15/lib/python2.7/random.py", line 277, in choice
+  return seq[int(self.random() * len(seq))] # raises IndexError if seq is empty
 IndexError: list index out of range
 
-If the file is empty, f.readlines() would return nothing, so self.lines is set to empty. When self.lines is passed as argument to the function random.choice(), since the parameter passed is empty, it would raise an IndexError as described by the comment.
+If the file is empty, f.readlines() would return nothing, 
+so self.lines is a empty list. 
+When self.lines is passed as argument to the function random.choice(), 
+since the parameter passed is empty, it would raise an IndexError 
+as described by the comment.
 
 Q4.
 It produces the following message:
@@ -26,8 +34,9 @@ File "randline.py", line 65
                       ^
 SyntaxError: invalid syntax
 
-In python2, it's possible to unpack arguments of exception, so we can get errno and strerror from IOError
-Whereas in python3 it's not possible to do so
+In python2, it's possible to unpack arguments of exception, 
+so we can unpack errno and strerror from IOError
+Whereas in python3 automatic tuple unpacking is removed
 So python2 and python3 have different syntax for exceptions
 To correct it in terms of python3 syntax, we change this line to
 	except IOError as e:
