@@ -6,7 +6,8 @@ Q2.
 we need to watch out for any ls commands that involves using -a and -A together
 because this combination's behavior is different (-a no longer overrides -A)
 So this new version of Coreutils might break applications
-that include searching for current and parent directories.
+that include searching for current or parent directories
+(e.g a recursive algorithm that finds the depth of a directory).
 
 Q3.
 It produces the following error message:
@@ -24,8 +25,8 @@ IndexError: list index out of range
 If the file is empty, f.readlines() would return nothing, 
 so self.lines is a empty list. 
 When self.lines is passed as argument to the function random.choice(), 
-since the parameter passed is empty, it would raise an IndexError 
-as described by the comment.
+it would raise an IndexError as specified in the comment:
+# raises IndexError if seq is empty
 
 Q4.
 It produces the following message:

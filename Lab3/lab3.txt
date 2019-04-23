@@ -1,8 +1,8 @@
 We start by verifying that the problem still occurs in /usr/bin/ls
-command: /usr/bin/ls -a -A
+command: /usr/bin/ls -a -A ~
 the first two lines of output are:
-.                          coreutilsInstall  hwords     .profile~
-..                         .cshrc            junk       proj1
+.                          .cshrc           junk       proj1
+..                         Desktop          lab2.log   .python_history
 
 we can see . and .. are printed, so the problem still occurs in /usr/bin/ls
 
@@ -55,12 +55,12 @@ install files to the directory /u/eng/class/classsen/coreutilsInstall
 command: cd ~/coreutilsInstall/bin
 go into the directory of the installed binary file of coreutils-8.29
 
-command: ./ls -a -A
+command: ./ls -a -A ~
 The bug causes this command to output file names including . and ..
 
 The first two lines of output are:
- .          csplit      fold      mktemp     readlink    stat       uname
- ..         cut         groups    mv         realpath    stdbuf    unexpand
+.                          .cshrc           junk       proj1
+..                         Desktop          lab2.log   .python_history
 
 4.
 command: cd ~/coreutils-8.29
@@ -93,10 +93,17 @@ command: cd src
 Enter the source file directory where the modfied ls command is located
 
 6.
-command: ./ls -a -A
+command: ./ls -a -A ~
+the first two lines of output are:
+assign2.html               Desktop          junk       .profile~
+.bash_history              Documents        lab2.log   proj1
+
 This command does not output . and ..
 so the bug has been fixed by the patch
 
+We make sure that the old version of ls still produces the bug
+command: cd ~/coreutilsInstall/bin
+command: ./ls -a -A ~
 the first two lines of output are:
-'['                         nice.c
- b2sum                      nice.o
+.                          .cshrc           junk       proj1
+..                         Desktop          lab2.log   .python_history
