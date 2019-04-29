@@ -3,14 +3,14 @@
         * ls.c: timespec_cmp in lib/timespec.h has been changed to fix a potent\
 ial overflow that causes ls -t to mishandle files whose time stamps are very fa\
 r in the past.
---- timespec.h	2005-09-21 23:05:39.000000000 -0700
-+++ timespec_corrected.h	2019-04-28 18:33:09.128345000 -0700
-@@ -45,8 +45,14 @@
+--- timespec.h	2019-04-29 14:36:20.921859000 -0700
++++ timespec_corrected.h	2019-04-29 14:37:30.582660000 -0700
+@@ -45,8 +45,15 @@
  static inline int
  timespec_cmp (struct timespec a, struct timespec b)
  {
--  int diff = a.tv_sec - b.tv_sec;
--  return diff ? diff : a.tv_nsec - b.tv_nsec;
+-   int diff = a.tv_sec - b.tv_sec;
+-   return diff ? diff : a.tv_nsec - b.tv_nsec;
 +  if(a.tv_sec < b.tv_sec){
 +    return -1;
 +  }
@@ -18,7 +18,8 @@ r in the past.
 +    return 1;
 +  }
 +  else{
-+    return a.tv_nsec > b.tv_nsec ? 1 : (a.tv_nsec < b.tv_nsec ? -1 : 0)
++    return a.tv_nsec > b.tv_nsec ? 1 : (a.tv_nsec < b.tv_nsec ? -1 : 0);
++  }
  }
  
  # if ! HAVE_DECL_NANOSLEEP
