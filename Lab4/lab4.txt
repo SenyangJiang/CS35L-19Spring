@@ -1,0 +1,217 @@
+1.
+First I download the tarball of the bugged version of coreutils:
+$ wget http://web.cs.ucla.edu/classes/spring19/cs35L/assign/coreutils-with-bug.tar.gz
+
+Unzip the tarball:
+$ tar -xzvf coreutils-with-bug.tar.gz
+
+create a directory for installing coreutils:
+$ mkdir ~/coreutilsInstall
+
+2.
+Go into the directory containing unzipped coreutils files:
+$ cd coreutils-with-bug
+
+Then I tried to build the bugged version of coreutils:
+$ ./configure CFLAGS='-g -O0' --prefix=/u/eng/class/classsen/coreutilsInstall
+CFLAGS='-g -O0' disables compiler optimizations
+
+$make
+Then I enconter this error:
+
+In file included from utimecmp.c:41:
+utimens.h:2:5: error: conflicting types for 'futimens'
+ int futimens (int, char const *, struct timespec const [2]);
+     ^~~~~~~~
+In file included from utimecmp.h:25,
+                 from utimecmp.c:25:
+/usr/include/sys/stat.h:373:12: note: previous declaration of 'futimens' was here
+ extern int futimens (int __fd, const struct timespec __times[2]) __THROW;
+            ^~~~~~~~
+
+This is because the function "futimens" is defined differently in utimens.h and /usr/include/sys/stat.h
+Since they are both included in utimecmp.c, these two declaration of "futimens" would conflict and produce an error
+
+3.
+I download the patch into current directory:
+$ wget http://web.cs.ucla.edu/classes/spring19/cs35L/assign/coreutils.diff
+
+Then apply the patch to corresponding files:
+$ patch -p0 <coreutils.diff
+
+It creates the following message:
+patching file lib/utimens.c
+patching file lib/utimens.h
+patching file src/copy.c
+patching file src/tee.c
+patching file src/touch.c
+
+The patch is successful
+
+Then install coreutils with the patch to the directory "coreutilsInstall":
+$ make
+$ make install
+
+This time it builds successfully
+
+4.
+$ cd ~
+Then I run the commands shown on the spec:
+$ tmp=$(mktemp -d)
+$ cd $tmp
+$ touch -d '1918-11-11 11:00 GMT' wwi-armistice-cs35L
+$ touch now
+$ sleep 1
+$ touch now1
+$ TZ=UTC0 ~/coreutilsInstall/bin/ls -lt --full-time wwi-armistice-cs35L now now1
+The last command outputs the following:
+-rw-r--r-- 1 classsen class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice-cs35L
+-rw-r--r-- 1 classsen class 0 2019-04-28 23:07:39.112625048 +0000 now1
+-rw-r--r-- 1 classsen class 0 2019-04-28 23:07:38.010585761 +0000 now
+
+The file wwi-armistice-cs35L is incorrectly considered as the newest file
+
+Then I make sure the problem does not occur using the correct ls:
+$ TZ=UTC0 ls -lt --full-time wwi-armistice-cs35L now now1
+-rw-r--r-- 1 classsen class 0 2019-04-28 23:07:39.112625048 +0000 now1
+-rw-r--r-- 1 classsen class 0 2019-04-28 23:07:38.010585761 +0000 now
+-rw-r--r-- 1 classsen class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice-cs35L
+
+The output is right using the correct version of ls
+
+At last, remove the temp directory:
+$ cd
+$ rm -fr $tmp
+
+5.
+First we go into the directory containing source file and executable ls
+$ cd ~/coreutils-with-bug/src
+
+First I check the ls.c source file to look for any functions related to the problem
+$ cd ~/coreutils-with-bug/src
+$ emacs ls.c
+
+Specifically, I look for where the option 't' (sort by time) options appears in the code and then search for functions related with that
+
+I found that function sort_files is a function that will sort the files according to order specified
+
+Then make the three files:
+$ tmp=$(mktemp -d)
+$ cd $tmp
+$ touch -d '1918-11-11 11:00 GMT' wwi-armistice-cs35L
+$ touch now
+$ sleep 1
+$ touch now1
+
+Then open gdb and load ls:
+$ gdb ~/coreutils-with-bug/src/ls
+Then I set a breakpoint at function sort_files
+
+Then run ls with the three filenames:
+(gdb) run -lt wwi-armistice-cs35L now now1
+Starting program: /w/home.03/class/classsen/coreutils-with-bug/src/ls -lt wwi-armistice-cs35L now now1
+
+Breakpoint 1, sort_files () at ls.c:2962
+2962      if (! setjmp (failed_strcoll))
+(gdb) info locals
+func = 0x0
+(gdb) s
+2964          switch (sort_type)
+(gdb) s
+2969              switch (time_type)
+(gdb) s
+2975                  func = sort_reverse ? rev_cmp_mtime : compare_mtime;
+(gdb) s
+2976                  break;
+(gdb) info locals
+func = 0x405fc2 <compare_mtime>
+(gdb) s
+2983              break;
+(gdb) s
+3034      qsort (files, files_index, sizeof *files, func);
+(gdb) info locals
+func = 0x405fc2 <compare_mtime>
+
+I found that the compare function used is compare_mtime
+so I set another breakpoint at compare_mtime
+(gdb) b compare_mtime
+Breakpoint 2 at 0x405fd2: file ls.c, line 2884.
+(gdb) s
+Breakpoint 2, compare_mtime (a=0x61a180, b=0x61a230) at ls.c:2884
+2884    static int compare_mtime (V a, V b) { return cmp_mtime (a, b, xstrcoll); }
+(gdb) s
+cmp_mtime (a=0x61a180, b=0x61a230, cmp=0x405d48 <xstrcoll>) at ls.c:2880
+2880      int diff = timespec_cmp (get_stat_mtime (&b->stat),
+(gdb) s
+get_stat_mtime (st=0x61a188) at ../lib/stat-time.h:121
+121       return STAT_TIMESPEC (st, st_mtim);
+(gdb) s
+128     }
+(gdb) s
+get_stat_mtime (st=0x61a238) at ../lib/stat-time.h:121
+121       return STAT_TIMESPEC (st, st_mtim);
+(gdb) s
+128     }
+(gdb) s
+timespec_cmp (a=..., b=...) at ../lib/timespec.h:48
+48        int diff = a.tv_sec - b.tv_sec;
+
+this timespec_cmp could be the source of the problem, since diff may overflow
+
+Then I look into this function:
+(gdb) l
+43      /* Return negative, zero, positive if A < B, A == B, A > B, respectively.
+44         Assume the nanosecond components are in range, or close to it.  */
+45      static inline int
+46      timespec_cmp (struct timespec a, struct timespec b)
+47      {
+48        int diff = a.tv_sec - b.tv_sec;
+49        return diff ? diff : a.tv_nsec - b.tv_nsec;
+50      }
+51
+52      # if ! HAVE_DECL_NANOSLEEP
+
+I looked at the arguments:
+(gdb) info args
+a = {tv_sec = 1556499701, tv_nsec = 423894023}
+b = {tv_sec = 1556499700, tv_nsec = 330855098}
+This one should be fine since a.tv_sec and b.tv_sec are close, diff does not overflow
+
+I continued running the program, checking the arguments when entering this function again
+(gdb) info args
+a = {tv_sec = 1556499701, tv_nsec = 423894023}
+b = {tv_sec = -1613826000, tv_nsec = 0}
+(gdb) s
+49        return diff ? diff : a.tv_nsec - b.tv_nsec;
+(gdb) info locals
+diff = -1124641595
+
+a.tv_sec - b.tv_sec should be postive, but it overflows and it becomes negative
+
+Then I go to the directory containing timespec.h
+$ cd ~/coreutils-with-bug/lib
+First I create a copy of timespec.h
+$ cp timespec.h timespec_corrected.h
+Then I opened timespec_corrected.h and change timespec_cmp to the following
+
+static inline int
+timespec_cmp (struct timespec a, struct timespec b)
+{
+  if(a.tv_sec < b.tv_sec){
+    return -1;
+  }
+  else if(a.tv_sec > b.tv_sec){
+    return 1;
+  }
+  else{
+    return a.tv_nsec > b.tv_nsec ? 1 : (a.tv_nsec < b.tv_nsec ? -1 : 0)
+}
+
+Then I create the patch file:
+$ diff -u timespec.h timespec_corrected.h > lab4.diff
+
+Then create a ChangeLog
+$ emacs ls.c
+$ C-x 4 a
+
+Copy the ChangeLog to the patch lab4.diff
