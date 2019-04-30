@@ -1,25 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int frobcmp(const void* a,const void* b){
-  char const* first = *(char const**) a;
-  char const* second = *(char const**) b;
-  while(*first != ' ' && *second != ' ' && *first == *second){
-    first++;
-    second++;
+int frobcmp(const char* a,const char* b){
+  while(*a != ' ' && *b != ' ' && *a == *b){
+    a++;
+    b++;
       }
-  if(*first == ' ' && *second == ' '){
+  if(*a == ' ' && *b == ' '){
     return 0;
   }
-  else if(*first == ' '){
-    return -(*second^42);
+  else if(*a == ' '){
+    return -(*b^42);
   }
-  else if(*second == ' '){
-    return *first^42;
+  else if(*b == ' '){
+    return *a^42;
   }
   else{
-    return (*first^42)-(*second^42);
+    return (*a^42)-(*b^42);
       }
+}
+
+int comp(const void* a, const void* b){
+  return frobcmp(*(char const**) a, *(char const**) b);
 }
 
 int main(){
@@ -79,7 +81,7 @@ int main(){
   if(record == NULL){
     return 0;
   }
-  qsort(record, strCount, sizeof(char*), frobcmp);
+  qsort(record, strCount, sizeof(char*), comp);
   int i = 0;
   for(i = 0; i < strCount; i++){
     char* str = record[i];
