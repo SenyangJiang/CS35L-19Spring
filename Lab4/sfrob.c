@@ -23,38 +23,65 @@ int frobcmp(const void* a,const void* b){
 }
 
 int main(){
-  char** record = malloc(0);
+  char** record = NULL;
   int strCount = 0;
-  char* currStr = malloc(0);
+  char* currStr = NULL;
   int charCount = 0;
-  int c = getchar();
+  char c = getchar();
+  if(ferror(stdin)){
+    fprintf(stderr, "Error reading from stdin");
+    exit(1);
+  }
   while(1){
     if(c == EOF){
       if(charCount != 0){
 	charCount++;
 	currStr = realloc(currStr, charCount*sizeof(char));
+	if(!currStr){
+	  fprintf(stderr, "Error allocating memory");
+	  exit(1);
+	}
 	currStr[charCount-1] = ' ';
 	strCount++;
 	record = realloc(record, strCount*sizeof(char*));
+	if(!record){
+	  fprintf(stderr, "Error allocating memory");
+	  exit(1);
+	}
 	record[strCount-1] = currStr;
       }
       break;
     }
     charCount++;
     currStr = realloc(currStr, charCount*sizeof(char));
+    if(!currStr){
+      fprintf(stderr, "Error allocating memory");
+      exit(1);
+    }
     currStr[charCount-1] = c;
     if(c == ' '){
       strCount++;
       record = realloc(record, strCount*sizeof(char*));
+      if(!record){
+	fprintf(stderr, "Error allocating memory");
+	exit(1);
+      }
       record[strCount-1] = currStr;
-      currStr = malloc(0);
+      currStr = NULL;
       charCount = 0;
     }
     c = getchar();
+    if(ferror(stdin)){
+      fprintf(stderr, "Error reading from stdin");
+      exit(1);
+    }
   }
-  int i = 0;
+  if(record == NULL){
+    return 0;
+  }
   qsort(record, strCount, sizeof(char*), frobcmp);
-   for(i = 0; i < strCount; i++){
+  int i = 0;
+  for(i = 0; i < strCount; i++){
     char* str = record[i];
     for(;*str != ' '; str++){
       putchar(*str);

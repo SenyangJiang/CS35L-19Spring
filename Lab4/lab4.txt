@@ -1,5 +1,5 @@
 ==================================================================
-Build this old version of ls
+Build this old version of coreutils
 
 
 First I download the tarball of the bugged version of coreutils:
@@ -19,7 +19,7 @@ $ ./configure CFLAGS='-g -O0' --prefix=/u/eng/class/classsen/coreutilsInstall
 CFLAGS='-g -O0' disables compiler optimizations
 
 $make
-Then I enconter this error:
+Then I encounter this error:
 
 In file included from utimecmp.c:41:
 utimens.h:2:5: error: conflicting types for 'futimens'
@@ -56,7 +56,8 @@ $ make install
 
 This time it builds successfully
 
-The patch fixes the problem because it renames the function "futimens" in utimens.h (as well as calls to this function in other files) to coreutils_futimens, so that the function name conflict in utimens.h and /usr/include/sys/stat.h is resolved.
+The patch fixes the problem because it renames the function "futimens" in utimens.h to coreutils_futimens, 
+so that the function name conflict in utimens.h and /usr/include/sys/stat.h is resolved.
 
 ==================================================================
 Reproduce the problem
@@ -91,7 +92,7 @@ $ cd
 $ rm -fr $tmp
 
 ========================================================================
-Debugged ls & Fix corresponding file
+Debugging ls & Fix corresponding file
 
 
 First we go into the directory containing source file and executable ls
