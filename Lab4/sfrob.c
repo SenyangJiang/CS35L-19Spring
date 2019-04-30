@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int frobcmp(const char* a,const char* b){
+int frobcmp(char const* a,char const* b){
   while(*a != ' ' && *b != ' ' && *a == *b){
     a++;
     b++;
