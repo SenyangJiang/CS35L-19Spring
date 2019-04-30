@@ -2,9 +2,17 @@
 #include <stdlib.h>
 
 int frobcmp(char const* a,char const* b){
-  while(*a != ' ' && *b != ' ' && *a == *b){
-    a++;
-    b++;
+  while(*a != ' ' && *b != ' '){
+    if((*a^42) > (*b^42)){
+      return 1;
+    }
+    else if((*a^42) < (*b^42)){
+      return -1;
+    }
+    else{
+      a++;
+      b++;
+    }
       }
   if(*a == ' ' && *b == ' '){
     return 0;
@@ -12,12 +20,9 @@ int frobcmp(char const* a,char const* b){
   else if(*a == ' '){
     return -1;
   }
-  else if(*b == ' '){
+  else{
     return 1;
   }
-  else{
-    return (*a^42)-(*b^42);
-      }
 }
 
 
