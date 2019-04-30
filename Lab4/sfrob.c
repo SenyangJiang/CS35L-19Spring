@@ -45,7 +45,7 @@ int main(){
       // add a trailing space if necessary
       if(charCount != 0){
 	charCount++;
-	currStr = realloc(currStr, charCount*sizeof(char));
+	currStr = (char*)realloc(currStr, charCount*sizeof(char));
 	// check whether space is allocated
 	if(!currStr){
 	  fprintf(stderr, "Error allocating memory");
@@ -53,7 +53,7 @@ int main(){
 	}
 	currStr[charCount-1] = ' ';
 	strCount++;
-	record = realloc(record, strCount*sizeof(char*));
+	record = (char**)realloc(record, strCount*sizeof(char*));
 	if(!record){
 	  fprintf(stderr, "Error allocating memory");
 	  exit(1);
@@ -63,7 +63,7 @@ int main(){
       break;
     }
     charCount++;
-    currStr = realloc(currStr, charCount*sizeof(char));
+    currStr = (char*)realloc(currStr, charCount*sizeof(char));
     if(!currStr){
       fprintf(stderr, "Error allocating memory");
       exit(1);
@@ -73,7 +73,7 @@ int main(){
     // and clear current string
     if(c == ' '){
       strCount++;
-      record = realloc(record, strCount*sizeof(char*));
+      record = (char**)realloc(record, strCount*sizeof(char*));
       if(!record){
 	fprintf(stderr, "Error allocating memory");
 	exit(1);
