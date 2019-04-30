@@ -20,6 +20,7 @@ int frobcmp(const char* a,const char* b){
       }
 }
 
+
 int comp(const void* a, const void* b){
   return frobcmp(*(char const**) a, *(char const**) b);
 }
@@ -36,9 +37,11 @@ int main(){
   }
   while(1){
     if(c == EOF){
+      // add a trailing space if necessary
       if(charCount != 0){
 	charCount++;
 	currStr = realloc(currStr, charCount*sizeof(char));
+	// check whether space is allocated
 	if(!currStr){
 	  fprintf(stderr, "Error allocating memory");
 	  exit(1);
@@ -61,6 +64,8 @@ int main(){
       exit(1);
     }
     currStr[charCount-1] = c;
+    // if meet space, store the string to record
+    // and clear current string
     if(c == ' '){
       strCount++;
       record = realloc(record, strCount*sizeof(char*));
@@ -78,10 +83,14 @@ int main(){
       exit(1);
     }
   }
+  // if file is empty, return immediately
   if(record == NULL){
     return 0;
   }
+  
   qsort(record, strCount, sizeof(char*), comp);
+
+  // print sorted record
   int i = 0;
   for(i = 0; i < strCount; i++){
     char* str = record[i];
@@ -90,6 +99,8 @@ int main(){
     }
     putchar(*str);
   }
+  
+  // free memory of strings and record itself
   for(i = 0; i < strCount; i++){
     free(record[i]);
   }
