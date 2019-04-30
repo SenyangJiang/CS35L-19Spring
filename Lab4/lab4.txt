@@ -212,14 +212,13 @@ $ make install
 
 After successful installation, I run these lines again:
 $ cd ~
-Then I run the commands shown on the spec:
 $ tmp=$(mktemp -d)
 $ cd $tmp
 $ touch -d '1918-11-11 11:00 GMT' wwi-armistice-cs35L
 $ touch now
 $ sleep 1
 $ touch now1
-$ TZ=UTC0 ~/coreutilsInstall/bin/ls -lt --full-time wwi-armistice-cs35L now now1
+$ TZ=UTC0 ~/coreutilsFixed/bin/ls -lt --full-time wwi-armistice-cs35L now now1
 
 The last command outputs the following:
 -rw-r--r-- 1 classsen class 0 2019-04-29 23:31:09.044822134 +0000 now1
