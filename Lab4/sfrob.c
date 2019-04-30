@@ -10,10 +10,10 @@ int frobcmp(char const* a,char const* b){
     return 0;
   }
   else if(*a == ' '){
-    return -(*b^42);
+    return -1;
   }
   else if(*b == ' '){
-    return *a^42;
+    return 1;
   }
   else{
     return (*a^42)-(*b^42);
