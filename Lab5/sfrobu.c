@@ -89,14 +89,12 @@ int main(int argc, const char* argv[]){
     char* buffer = (char*)malloc(bufSize*sizeof(char));
     n = read(STDIN_FILENO, buffer, bufSize);
     if(checkIO(n)){
-      freeMem(record, strCount);
       exit(1);
     }
     if(buffer[bufSize-1] != ' '){
       bufSize++;
       buffer = (char*)realloc(buffer, bufSize*sizeof(char));
       if(checkAllo(buffer)){
-        freeMem(record, strCount);
         exit(1);
       }
       buffer[bufSize-1] = ' ';
@@ -110,7 +108,6 @@ int main(int argc, const char* argv[]){
     // Allocate enough memory in record
     record = (char**)malloc(strCount*sizeof(char*));
     if(checkAllo(record)){
-      freeMem(record, strCount);
       exit(1);
     }
     // copy strings in buffer to record
@@ -128,7 +125,7 @@ int main(int argc, const char* argv[]){
       int len = end - begin;
       char* currStr = (char*)malloc(len*sizeof(char));
       if(checkAllo(currStr)){
-        freeMem(record, strCount);
+        freeMem(record, strCopied);
         exit(1);
       }
       for(int k = 0; k < len; k++){
@@ -158,7 +155,6 @@ int main(int argc, const char* argv[]){
       strCount++;
       record = (char**)realloc(record, strCount*sizeof(char*));
       if(checkAllo(record)){
-        freeMem(record, strCount);
         exit(1);
       }
       record[strCount-1] = currStr;
@@ -185,8 +181,7 @@ int main(int argc, const char* argv[]){
     }
     strCount++;
     record = (char**)realloc(record, strCount*sizeof(char*));
-    if(checkAllo(currStr)){
-      freeMem(record, strCount);
+    if(checkAllo(record)){
       exit(1);
     }
     record[strCount-1] = currStr;
