@@ -50,7 +50,8 @@ $ strace -c -o strace_a_u ./tr2u 'AB' 'XY' < testinput.txt > testoutput.txt
 ------ ----------- ----------- --------- --------- ----------------
 100.00   46.740555              10000024         1 total
 
-As we can see from the tables, tr2u makes far more system calls of read and write than tr2b, and consequently tr2u takes over 40s to finish the program where as tr2b only takes less than 1ms.
+As we can see from the tables, tr2u makes far more system calls of read and write than tr2b, 
+and consequently tr2u takes over 40s to finish the program where as tr2b only takes less than 1ms.
 
 (b) when copying a file to your terminal
 <1> system calls issued by tr2b
@@ -95,9 +96,11 @@ $ strace -c -o strace_b_u ./tr2u 'AB' 'XY' < testinput.txt
 100.00   51.070074              10000024         1 total
 
 
-Again this time, tr2u makes about 10,000,000 system calls of read and write (one read and write for each byte), whereas in the case of tr2b, it only makes about 20,000 system calls of read and write.
+Again this time, tr2u makes about 10,000,000 system calls of read and write (one read and write for each byte)
+whereas in the case of tr2b, it only makes about 20,000 system calls of read and write
 
-Another observation is that when copying to terminal, tr2b makes more system calls than when copying to another file.
+Another observation is that when copying to terminal, 
+tr2b makes more system calls of write than when copying to another file.
 
 4.
 Then I measure time taken for each program to copy same amount of data
@@ -117,7 +120,8 @@ user    0m1.452s
 sys     0m10.353s
 
 
-We see that tr2b takes far less time than tr2u, because it take advantage of buffer, instead of making expensive system calls for every byte as what tr2u does
+We see that tr2b takes far less time than tr2u, because it take advantage of buffer, 
+instead of making expensive system calls for every byte as what tr2u does
 
 =========================================================================
 Differences in performance between sfrob and sfrobu
@@ -195,7 +199,8 @@ real    1m13.357s
 user    0m17.781s
 sys     0m55.002s
 
-In conclusion, sfrob always outperforms sfrobu in terms of running time (except for the trivial case where there is no line), and the difference becomes even more significant as the number of lines increases
+In conclusion, sfrob always outperforms sfrobu in terms of running time 
+and the difference becomes even more significant as the number of lines increases
 
 ========================================================================
 Estimate the number of comparisons
@@ -273,29 +278,29 @@ $ time ./sfrobu -f < input4.txt > output.txt
 $ time ./sfrobs -f < input4.txt > output.txt
 
 sfrob
-real    0m20.837s
-user    0m11.031s
-sys     0m2.055s
+real    0m11.525s
+user    0m10.347s
+sys     0m0.476s
 
 sfrobu
-real    0m22.264s
-user    0m10.881s
-sys     0m1.912s
+real    1m33.258s
+user    0m17.552s
+sys     1m14.977s
 
 sfrobs
-real    0m14.863s
-user    0m3.492s
-sys     0m1.344s
+real    0m4.805s
+user    0m3.918s
+sys     0m0.469s
 
 sfrobu -f
-real    0m25.187s
-user    0m14.165s
-sys     0m2.020s
+real    1m37.152s
+user    0m20.489s
+sys     1m15.834s
 
 sfrobs -f
-real    0m16.940s
-user    0m5.288s
-sys     0m1.269s
+real    0m7.211s
+user    0m6.283s
+sys     0m0.472s
 
 So the ranking of the overall performance(from fastest to slowest):
 sfrobs
@@ -304,5 +309,6 @@ sfrob
 sfrobu
 sfrobu -f
 
-generally, the shell script sfrobs is the fastest, and sfrob that uses getchar() and putchar() is better then sfrobu which uses system calls read() and write()
+generally, the shell script sfrobs is the fastest.
+sfrob that uses getchar() and putchar() is better then sfrobu which uses system calls read() and write()
 Also, using the -f flag tends to reduce the performance of program
