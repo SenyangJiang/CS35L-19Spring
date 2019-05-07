@@ -86,7 +86,7 @@ int main(int argc, const char* argv[]){
   // allocate memory and read the whole file
   if(S_ISREG(fileStat.st_mode)&&fileStat.st_size > 0){
     int bufSize = fileStat.st_size;
-    char* buffer = (char*)malloc(bufSize);
+    char* buffer = (char*)malloc(bufSize*sizeof(char));
     n = read(STDIN_FILENO, buffer, bufSize);
     if(checkIO(n)){
       freeMem(record, strCount);
@@ -94,7 +94,7 @@ int main(int argc, const char* argv[]){
     }
     if(buffer[bufSize-1] != ' '){
       bufSize++;
-      buffer = (char*)realloc(buffer, bufSize);
+      buffer = (char*)realloc(buffer, bufSize*sizeof(char));
       if(checkAllo(buffer)){
         freeMem(record, strCount);
         exit(1);
@@ -202,9 +202,17 @@ int main(int argc, const char* argv[]){
   for(int i = 0; i < strCount; i++){
     char* str = record[i];
     for(;*str != ' '; str++){
-      write(STDOUT_FILENO, str, 1);
+      n = write(STDOUT_FILENO, str, 1);
+      if(checkIO(n)){
+	freeMem(record, strCount);
+	exit(1);
+      }
     }
-    write(STDOUT_FILENO, str, 1);
+    n = write(STDOUT_FILENO, str, 1);
+    if(checkIO(n)){
+      freeMem(record, strCount);
+      exit(1);
+    }
   }
   
   // free memory of strings and record itself
