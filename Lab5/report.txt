@@ -199,7 +199,8 @@ real    1m13.357s
 user    0m17.781s
 sys     0m55.002s
 
-In conclusion, sfrob always outperforms sfrobu in terms of running time 
+In conclusion, sfrob always outperforms sfrobu in terms of running time
+(except for the trivial case when number of lines is 0) 
 and the difference becomes even more significant as the number of lines increases
 
 ========================================================================
@@ -260,7 +261,7 @@ int main(){
   return 0;
 }
 
-Then I copied the output of the program to a string in the shell script sfrobs
+Then I copied the output of the program to a variable in the shell script sfrobs
 
 then I am able to use tr and sort to write the script to sort encrypted files
 
