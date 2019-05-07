@@ -1,0 +1,308 @@
+===================================================================
+Compare system calls by tr2b and tr2u
+
+After writing code for program tr2b.c and tr2u.c, I compiled them using gcc:
+$ gcc -std=c11 -o tr2b tr2b.c
+$ gcc -std-c11 -o tr2u tr2u.c
+
+3.
+First we make a file that contains 5000000 bytes:
+$ head --bytes=5000000 /dev/urandom > testinput.txt
+
+(a) when copying from one file to another
+<1> system calls issued by tr2b
+$ strace -c -o strace_a_b ./tr2b 'AB' 'XY' < testinput.txt > testoutput.txt
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 57.78    0.000947           2       613           read
+ 42.22    0.000692           1       611           write
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         4           fstat
+  0.00    0.000000           0         9           mmap
+  0.00    0.000000           0         4           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.001639                  1250         1 total
+
+<2> system calls issued by tr2u
+$ strace -c -o strace_a_u ./tr2u 'AB' 'XY' < testinput.txt > testoutput.txt
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 54.54   25.489984           5   5000000           write
+ 45.46   21.250343           4   5000002           read
+  0.00    0.000067          10         7           mmap
+  0.00    0.000059          59         1           execve
+  0.00    0.000046          12         4           mprotect
+  0.00    0.000014           7         2           open
+  0.00    0.000012          12         1           munmap
+  0.00    0.000007           4         2           close
+  0.00    0.000007           7         1           brk
+  0.00    0.000006           3         2           fstat
+  0.00    0.000006           6         1         1 access
+  0.00    0.000004           4         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   46.740555              10000024         1 total
+
+As we can see from the tables, tr2u makes far more system calls of read and write than tr2b, and consequently tr2u takes over 40s to finish the program where as tr2b only takes less than 1ms.
+
+(b) when copying a file to your terminal
+<1> system calls issued by tr2b
+$ strace -c -o strace_b_b ./tr2b 'AB' 'XY' < testinput.txt
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 97.29    0.086264           4     19818           write
+  2.52    0.002238           4       613           read
+  0.06    0.000055           6         9           mmap
+  0.04    0.000034           9         4           mprotect
+  0.02    0.000018           5         4           fstat
+  0.01    0.000013           7         2           open
+  0.01    0.000011          11         1           munmap
+  0.01    0.000009           9         1           execve
+  0.01    0.000008           8         1         1 access
+  0.01    0.000006           3         2           close
+  0.01    0.000006           6         1           brk
+  0.00    0.000003           3         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.088665                 20457         1 total
+
+
+<2> system calls issued by tr2u
+$ strace -c -o strace_b_u ./tr2u 'AB' 'XY' < testinput.txt
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 56.67   28.943466           6   5000000           write
+ 43.33   22.126560           4   5000002           read
+  0.00    0.000020           5         4           mprotect
+  0.00    0.000014           2         7           mmap
+  0.00    0.000011          11         1           munmap
+  0.00    0.000003           3         1           arch_prctl
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         2           fstat
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+------ ----------- ----------- --------- --------- ----------------
+100.00   51.070074              10000024         1 total
+
+
+Again this time, tr2u makes about 10,000,000 system calls of read and write (one read and write for each byte), whereas in the case of tr2b, it only makes about 20,000 system calls of read and write.
+
+Another observation is that when copying to terminal, tr2b makes more system calls than when copying to another file.
+
+4.
+Then I measure time taken for each program to copy same amount of data
+<1> tr2b
+$ time ./tr2b 'AB' 'XY' < testinput.txt > testoutput.txt
+
+real    0m0.261s
+user    0m0.152s
+sys     0m0.010s
+
+
+<2> tr2u 
+$ time ./tr2u 'AB' 'XY' < testinput.txt > testoutput.txt
+
+real    0m11.891s
+user    0m1.452s
+sys     0m10.353s
+
+
+We see that tr2b takes far less time than tr2u, because it take advantage of buffer, instead of making expensive system calls for every byte as what tr2u does
+
+=========================================================================
+Differences in performance between sfrob and sfrobu
+
+To create a file with large number of input lines, I first wrote a c program that prints 1 million lines:
+#include <stdio.h>
+
+int main(){
+  for(int i = 0; i < 1000000; i++){
+    printf("*~BO *{_CIA *hXE]D *LER #@_GZY #E\\OX #^BO #FKPS #NEM\4\n");
+  }
+  return 0;
+}
+
+Then I compiled and run the program:
+$ gcc -std=c11 -o createlines createlines.c
+$ ./createlines > input4.txt
+
+Then I create file with 0, 100, 10000 input lines with this file:
+$ head --lines=0 < input4.txt > input1.txt
+$ head --lines=100 < input4.txt > input2.txt
+$ head --lines=10000 < input4.txt > input3.txt
+
+At last, I compile the two programs using gcc -std=c11:
+$ gcc -std=c11 -o sfrob sfrob.c
+$ gcc -std=c11 -o sfrobu sfrobu.c
+
+<1>test with 0 lines
+**sfrob**
+$ time ./sfrob < input1.txt
+real    0m0.003s
+user    0m0.001s
+sys     0m0.000s
+
+**sfrobu**
+$ time ./sfrobu < input1.txt
+real    0m0.002s
+user    0m0.001s
+sys     0m0.000s
+
+<2>test with 100 lines
+**sfrob**
+$ time ./sfrob < input2.txt
+real    0m0.008s
+user    0m0.000s
+sys     0m0.003s
+
+**sfrobu**
+$ time ./sfrobu < input2.txt
+real    0m0.011s
+user    0m0.002s
+sys     0m0.006s
+
+<3>test with 10000 lines
+**sfrob**
+$ time ./sfrob < input3.txt
+real    0m0.135s
+user    0m0.083s
+sys     0m0.022s
+**sfrobu**
+$ time ./sfrobu < input3.txt
+real    0m0.701s
+user    0m0.144s
+sys     0m0.552s
+<4>test with 1000000 lines
+**sfrob**
+$ time ./sfrob < input4.txt
+real    0m22.433s
+user    0m11.305s
+sys     0m2.061s
+
+**sfrobu**
+$ time ./sfrobu < input4.txt
+real    1m13.357s
+user    0m17.781s
+sys     0m55.002s
+
+In conclusion, sfrob always outperforms sfrobu in terms of running time (except for the trivial case where there is no line), and the difference becomes even more significant as the number of lines increases
+
+========================================================================
+Estimate the number of comparisons
+
+create a copy of sfrobu.c called sfrobucomp.c,
+add a global variable: int comparisons,
+and increment the global variable when entering frobcomp
+At last, print the number of comparisons to the terminal
+
+Then compile the program:
+$ gcc -std=c11 -o sfrobucomp sfrobucomp.c
+
+Then test it with different number of lines:
+<1>0 lines
+$ ./sfrobucomp < input1.txt
+Number of comparisons: 0
+
+<2>100 lines
+$ ./sfrobucomp < input2.txt
+Number of comparisons: 6451
+
+<3>10000 lines
+$ ./sfrobucomp < input3.txt
+Number of comparisons: 1140594
+
+<4>1000000 lines
+$ ./sfrobucomp < input4.txt
+Number of comparisons: 163617816
+
+Let the number of lines be N
+Because qsort uses a variant of quicksort, the number of comparisons should be a function of NlogN
+Let X = NlogN
+Then we get the following data
+X=NlogN   Y
+0         0
+200       6451
+40000     1140594
+6000000   163617816
+Using linear regression:
+Y = 27.27*X + 16899
+
+so the number of comparisons = 27.27NlogN + 16899
+
+========================================================================
+sfrobs
+
+I first wrote a C program to print out the frobnicated forms of all original ascii chars:
+#include <stdio.h>
+#include <limits.h>
+
+int main(){
+  unsigned char i = 0;
+  for(; i < UCHAR_MAX; i++){
+    printf("\\%o", i^42);
+  }
+  printf("\\%o\n", i^42);
+  return 0;
+}
+
+Then I copied the output of the program to a string in the shell script sfrobs
+
+then I am able to use tr and sort to write the script to sort encrypted files
+
+At last make the shell script executable
+$ chmod +x sfrobs
+
+=========================================================================
+Compare the overall performance of sfrob, sfrobu, sfrobs, sfrobu -f and sfrobs -f
+
+I used the file withh 1000000 lines to test these programs:
+$ time ./sfrob < input4.txt > output.txt
+$ time ./sfrobu < input4.txt > output.txt
+$ time ./sfrobs < input4.txt > output.txt
+$ time ./sfrobu -f < input4.txt > output.txt
+$ time ./sfrobs -f < input4.txt > output.txt
+
+sfrob
+real    0m20.837s
+user    0m11.031s
+sys     0m2.055s
+
+sfrobu
+real    0m22.264s
+user    0m10.881s
+sys     0m1.912s
+
+sfrobs
+real    0m14.863s
+user    0m3.492s
+sys     0m1.344s
+
+sfrobu -f
+real    0m25.187s
+user    0m14.165s
+sys     0m2.020s
+
+sfrobs -f
+real    0m16.940s
+user    0m5.288s
+sys     0m1.269s
+
+So the ranking of the overall performance(from fastest to slowest):
+sfrobs
+sfrobs -f
+sfrob
+sfrobu
+sfrobu -f
+
+generally, the shell script sfrobs is the fastest, and sfrob that uses getchar() and putchar() is better then sfrobu which uses system calls read() and write()
+Also, using the -f flag tends to reduce the performance of program
