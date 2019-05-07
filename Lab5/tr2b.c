@@ -10,7 +10,7 @@ int main(int argc, const char *argv[]){
   for(int i = 0; i < lenFrom; i++){
     for(int j = i+1; j < lenFrom; j++){
       if(from[i] == from[j]){
-	fprintf(stderr, "from has duplicate bytes");
+	fprintf(stderr, "ERROR: from has duplicate bytes\n");
 	exit(1);
       }
     }
@@ -19,7 +19,7 @@ int main(int argc, const char *argv[]){
   // if from and to are not of the same length
   // exit with error 
   if(lenFrom != strlen(to)){
-    fprintf(stderr, "from and to are not of the same length");
+    fprintf(stderr, "ERROR: from and to are not of the same length\n");
     exit(1);
   }
   
@@ -28,7 +28,7 @@ int main(int argc, const char *argv[]){
     if(c == EOF){
       break;
     }
-    for(int i = 0; from[i] != '\0'; i++){
+    for(int i = 0; i < lenFrom; i++){
       if(from[i] == c){
 	c = to[i];
 	break;
