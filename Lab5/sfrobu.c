@@ -60,7 +60,7 @@ int main(int argc, const char* argv[]){
   fstat(0, &fileStat);
   // if it is a regular file,
   // allocate memory and read the whole file
-  if(S_ISREG(fileStat.st_mode)){
+  if(S_ISREG(fileStat.st_mode)&&fileStat.st_size > 0){
     int bufSize = fileStat.st_size;
     char* buffer = (char*)malloc(bufSize);
     read(0, buffer, bufSize);
@@ -130,13 +130,15 @@ int main(int argc, const char* argv[]){
 
   // save the remaining string into record
   if(charCount != 0){
-    charCount++;
-    currStr = (char*)realloc(currStr, charCount*sizeof(char));
-    if(!currStr){
-      fprintf(stderr, "Error allocating memory");
-      exit(1);
+    if(currStr[charCount-1] != ' '){
+      charCount++;
+      currStr = (char*)realloc(currStr, charCount*sizeof(char));
+      if(!currStr){
+	fprintf(stderr, "Error allocating memory");
+	exit(1);
+      }
+      currStr[charCount-1] = ' ';
     }
-    currStr[charCount-1] = ' ';
     strCount++;
     record = (char**)realloc(record, strCount*sizeof(char*));
     if(!record){
