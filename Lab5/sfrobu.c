@@ -47,6 +47,29 @@ int comp(const void* a, const void* b){
   return frobcmp(*(char const**) a, *(char const**) b);
 }
 
+void freeMem(char** record, int strCount){
+  for(int i = 0; i < strCount; i++){
+    free(record[i]);
+  }
+  free(record);
+}
+
+int checkAllo(void* p){
+  if(!p){
+    fprintf(stderr, "Error allocating memory");
+    return 1;
+  }
+  return 0;
+}
+
+int checkIO(ssize_t n){
+  if(n < 0){
+    fprintf(stderr, "Error reading input");
+    return 1;
+  }
+  return 0;
+}
+
 int main(int argc, const char* argv[]){
   if(argc == 2 && (strcmp(argv[1],"-f") == 0)){
     ignore_case = 1;
@@ -55,18 +78,27 @@ int main(int argc, const char* argv[]){
   char** record = NULL;
   int strCount = 0;
   char* currStr = NULL;
+  ssize_t n;
   
   struct stat fileStat;
-  fstat(0, &fileStat);
+  fstat(STDIN_FILENO, &fileStat);
   // if it is a regular file,
   // allocate memory and read the whole file
   if(S_ISREG(fileStat.st_mode)&&fileStat.st_size > 0){
     int bufSize = fileStat.st_size;
     char* buffer = (char*)malloc(bufSize);
-    read(0, buffer, bufSize);
+    n = read(STDIN_FILENO, buffer, bufSize);
+    if(checkIO(n)){
+      freeMem(record, strCount);
+      exit(1);
+    }
     if(buffer[bufSize-1] != ' '){
       bufSize++;
       buffer = (char*)realloc(buffer, bufSize);
+      if(checkAllo(buffer)){
+        freeMem(record, strCount);
+        exit(1);
+      }
       buffer[bufSize-1] = ' ';
     }
     // count the number of words according to spaces
@@ -77,7 +109,10 @@ int main(int argc, const char* argv[]){
     }
     // Allocate enough memory in record
     record = (char**)malloc(strCount*sizeof(char*));
-
+    if(checkAllo(record)){
+      freeMem(record, strCount);
+      exit(1);
+    }
     // copy strings in buffer to record
     int strCopied = 0;
     int begin = 0;
@@ -92,6 +127,10 @@ int main(int argc, const char* argv[]){
       end = i + 1; // end: position of the first byte after space
       int len = end - begin;
       char* currStr = (char*)malloc(len*sizeof(char));
+      if(checkAllo(currStr)){
+        freeMem(record, strCount);
+        exit(1);
+      }
       for(int k = 0; k < len; k++){
         currStr[k] = buffer[begin+k];
       }
@@ -105,11 +144,11 @@ int main(int argc, const char* argv[]){
   currStr = NULL;
   int c;
   int charCount = 0;
-  while(read(0, &c, 1) > 0){
+  while(n = read(STDIN_FILENO, &c, 1) > 0){
     charCount++;
     currStr = (char*)realloc(currStr, charCount*sizeof(char));
-    if(!currStr){
-      fprintf(stderr, "Error allocating memory");
+    if(checkAllo(currStr)){
+      freeMem(record, strCount);
       exit(1);
     }
     currStr[charCount-1] = c;
@@ -118,8 +157,8 @@ int main(int argc, const char* argv[]){
     if(c == ' '){
       strCount++;
       record = (char**)realloc(record, strCount*sizeof(char*));
-      if(!record){
-        fprintf(stderr, "Error allocating memory");
+      if(checkAllo(record)){
+        freeMem(record, strCount);
         exit(1);
       }
       record[strCount-1] = currStr;
@@ -128,21 +167,26 @@ int main(int argc, const char* argv[]){
     }
   }
 
+  if(checkIO(n)){
+    freeMem(record, strCount);
+    exit(1);
+  }
+  
   // save the remaining string into record
   if(charCount != 0){
     if(currStr[charCount-1] != ' '){
       charCount++;
       currStr = (char*)realloc(currStr, charCount*sizeof(char));
-      if(!currStr){
-	fprintf(stderr, "Error allocating memory");
-	exit(1);
+      if(checkAllo(currStr)){
+        freeMem(record, strCount);
+        exit(1);
       }
       currStr[charCount-1] = ' ';
     }
     strCount++;
     record = (char**)realloc(record, strCount*sizeof(char*));
-    if(!record){
-      fprintf(stderr, "Error allocating memory");
+    if(checkAllo(currStr)){
+      freeMem(record, strCount);
       exit(1);
     }
     record[strCount-1] = currStr;
@@ -155,19 +199,15 @@ int main(int argc, const char* argv[]){
   qsort(record, strCount, sizeof(char*), comp);
 
   // print sorted record
-  int i = 0;
-  for(i = 0; i < strCount; i++){
+  for(int i = 0; i < strCount; i++){
     char* str = record[i];
     for(;*str != ' '; str++){
-      write(1, str, 1);
+      write(STDOUT_FILENO, str, 1);
     }
-    write(1, str, 1);
+    write(STDOUT_FILENO, str, 1);
   }
   
   // free memory of strings and record itself
-  for(i = 0; i < strCount; i++){
-    free(record[i]);
-  }
-  free(record);
+  freeMem(record, strCount);
   return 0;
 }
