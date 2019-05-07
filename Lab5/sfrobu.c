@@ -56,7 +56,7 @@ void freeMem(char** record, int strCount){
 
 int checkAllo(void* p){
   if(!p){
-    fprintf(stderr, "Error allocating memory");
+    fprintf(stderr, "Error allocating memory\n");
     return 1;
   }
   return 0;
@@ -64,7 +64,7 @@ int checkAllo(void* p){
 
 int checkIO(ssize_t n){
   if(n < 0){
-    fprintf(stderr, "Error reading input");
+    fprintf(stderr, "Error reading input\n");
     return 1;
   }
   return 0;
