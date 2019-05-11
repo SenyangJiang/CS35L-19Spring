@@ -1,0 +1,71 @@
+First I check whether /usr/local/cs/bin is added to the PATH environment variable:
+$ echo $PATH
+/usr/local/cs/bin is printed as the first entry
+
+Then I check the version of coreutils:
+$ sort --version
+sort (GNU coreutils) 8.31
+This version is newer than 8.6
+
+=========================================================================
+Generate a file with 2^24 random floating point numbers
+
+I first explore the 'od' man page to find the necessary option:
+$ man od
+-N specifies the number of bytes we want to dump in the input file, in this case is 2^24 bytes
+-An is used to prevent from printing the offset from the start of each line
+-t fF specifies the output format is float
+
+Then generate a file with 2^24 random single-precision floating point numbers:
+$ od -An -t fF -N $((2**24)) < /dev/urandom | 
+$ tr -s [:blank:] '\n' |
+$ sed '/^$/d' > output.txt
+
+tr -s [:blank:] '\n' is used to replace the spaces between each floating point number with newline, and the -s option removes extra empty line between the numbers
+sed '/^$/d' removes an empty line at the start of the file
+
+=========================================================================
+time the sort command without and with --parallel option
+
+Use time -p to time the command 'sort -g' on the file we just created
+$ time -p sort -g output.txt > /dev/null
+Result:
+	real 8.52
+	user 45.03
+	sys 0.21
+
+Then I check how to use the --parallel option
+$ sort --help
+I found that I should specify --parallel=N, where N is the number of threads
+
+Then I run sort with 1, 2, 4, 8 threads with the time command:
+<1 thread> 
+$ time -p sort -g --parallel=1 output.txt > /dev/null
+Result:
+	real 43.07
+	user 42.94
+	sys 0.11
+
+<2 threads> 
+$ time -p sort -g --parallel=2 output.txt > /dev/null
+Result:
+	real 23.10
+	user 43.95
+	sys 0.10
+
+<4 threads> 
+$ time -p sort -g --parallel=4 output.txt > /dev/null
+Result:
+	real 13.32
+	user 44.52
+	sys 0.15
+
+<8 threads>
+$ time -p sort -g --parallel=8 output.txt > /dev/null
+Result:
+	real 8.60
+	user 45.01
+	sys 0.18
+
+We can see that as the number of threads increases, the time taken by the sort programs decreases. 
+Furthermore, the time taken by the sort command without specifying the --parallel option is similar to time taken by the sort using 8 threads.
