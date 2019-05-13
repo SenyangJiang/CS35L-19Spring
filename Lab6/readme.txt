@@ -12,7 +12,7 @@ to:
 	for( int px=thread_index; px<width; px+=nthreads )
 
 This method ensures that the outermost iteration of two threads differ at most by 1
-Also, when the number of threads exceed the width, threads whose thread index is greater than or equal to the width would not enter the loop, so it will not case any problems.
+Also, when the number of threads exceed the width, threads whose thread index is greater than or equal to the width would not enter the loop, so it will not cause any problems.
 
 2.
 When I am writing the function for multiple threads to run, I noticed there are variable that should be accessed by all threads.
