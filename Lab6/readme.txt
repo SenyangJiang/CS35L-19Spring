@@ -12,13 +12,13 @@ from:
 to:
 	for( int px=thread_index; px<width; px+=nthreads )
 
-This method ensures that the outermost iteration of two threads differ at most by 1
+This method ensures that the number of outermost iteration in two threads differ at most by 1
 Also, when the number of threads exceed the width, threads whose thread index is greater than or equal to the width would not enter the loop, so it will not case any problems.
 
 2.
-When I am writing the function for multiple threads to run, I noticed there are variable that should be accessed by all threads.
+When I am writing the function for multiple threads to run, I noticed there are variables that should be accessed by all threads.
 
-So I first think about packing them as a argument struct, and pass a pointer of the struct to the function.
+So I first think about packing them as an argument struct, and pass a pointer of the struct to the function.
 
 struct argsPack{
 	int nthreads;
@@ -36,7 +36,6 @@ global variables that I declare:
 	float all_scaled_color[width][height][3];
 
 all_scaled_color is an 3 dimensional array of floating point numbers that stores pixel values
-The array is then printed in the main function
 
 Signature of parallel_func:
 	void* parallel_func(void* index);
@@ -47,7 +46,7 @@ a pointer to the thread index is passed into the function
 I first wrote my pthread_join as follows:
 	pthread_join(&tids[t], NULL);
 which produces an compiler warning.
-Then I found out the first parameter of pthread_join should be of type int
+Then I found out the first parameter of pthread_join should be of type pthread_t
 After editing this line to:
 	pthread_join(tids[t], NULL);
 The compiler warning is solved.
@@ -77,4 +76,4 @@ user    0m44.504s
 sys     0m0.003s
 
 
-Approximately, when the number of threads is doubled, the time taken by the SRT is reduced to half. This indicates that my implementation of SRT improves its performace.
+Approximately, when the number of threads is doubled, the time taken by the SRT is reduced to half. This indicates that my implementation of SRT successfully uses multiple threads to improve its performace.
