@@ -27,7 +27,7 @@ struct argsPack{
 	int thread_index;
 };
 
-Then I notice the first three variables is the same across all threads, so this is a unnecessary duplicate of resource. 
+Then I notice the first three variables are the same across all threads, so this is a unnecessary duplicate of resource. 
 So I decide to declare them as global variables, and only pass a pointer to the thread_index, which would be different for all threads.
 
 global variables that I declare:
