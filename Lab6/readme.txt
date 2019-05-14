@@ -76,4 +76,5 @@ user    0m44.504s
 sys     0m0.003s
 
 
-Approximately, when the number of threads is doubled, the time taken by the SRT is reduced to half. This indicates that my implementation of SRT successfully uses multiple threads to improve its performace.
+Approximately, when the number of threads is doubled, the time taken by the SRT is reduced to half. 
+This indicates that my implementation of SRT successfully uses multiple threads to improve its performace.
