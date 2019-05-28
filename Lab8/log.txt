@@ -1,0 +1,70 @@
+======================================================================
+Lab environment setup
+$ dpkg --get-selections | grep openssh
+openssh-client                                  install
+openssh-server                                  install
+openssh-sftp-server                             install
+
+openssh-server and openssh-client are installed
+
+======================================================================
+Server-side Setup
+
+Create user name for the client:
+$ sudo useradd -d /home/senyang -m senyang
+-m means create home directory for the new user "senyang"
+-d specifies the path of the home directory
+
+Then update the password by:
+$ sudo passwd senyang
+
+Create .ssh directory for new user "senyang":
+$ cd /home/senyang
+$ sudo mkdir .ssh
+
+Transfer ownership .ssh directory to user "senyang"
+$ sudo chown -R senyang .ssh
+
+-R means change ownership recursively
+
+Change permission on .ssh directory:
+$ sudo chmod 700 .ssh
+This gives only user "senyang" the right to read, write and execute
+
+I looked at my ip address using:
+$ ifconfig
+My ip address is 172.29.8.16, which would be used by my partner Scott
+
+======================================================================
+Client-side
+
+First generate a pair of public and private keys using:
+$ ssh-keygen
+The keys are saved to default file ~/.ssh/id_rsa and ~/.ssh/id_rsa.pub
+Set passphrase to "senyang" 
+
+Then I run ifconfig on my partner's terminal to get his IP address:
+172.29.9.169
+
+Then copy my public key to the server:
+$ ssh-copy-id -i jiang@172.29.9.169
+Enter the password "1234jiang"
+The public key has been copied to the server
+
+Add private key to ssh-agent:
+$ eval $(ssh-agent)
+$ ssh-add
+Enter the passphrase "senyang" for my private key
+The private key has been added to the ssh-agent
+
+SSH to Scott's server:
+ssh -X jiang@172.29.9.169
+I am logged in to the server without entering password
+
+Create a file in my home directory:
+$ touch test
+by using "ls" command, I see that the file has been successfully created in the server
+
+Open firefox:
+$ firefox
+The firefox window is opened on my computer (though it is very slow)
