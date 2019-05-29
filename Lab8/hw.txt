@@ -1,5 +1,8 @@
 1.
-The resulting network is still secure. If the other teams can observe all the bytes in the network, they have access to the encrypted message. But they does not have the private key to decrypt the message.
+The resulting network is still secure. If the other teams can observe 
+all the bytes in the network, they have access to the encrypted 
+message. But they does not have the private key to decrypt the 
+message.
 
 (1) The network is still secure. 
 If the other teams have the keystroke, they would know the passphrase
@@ -9,8 +12,8 @@ decrypt the message.
 
 (2) The network is not secure.
 If the other teams have physical control of the USB, they have direct 
-access to the private key, and they can use the private key to 
-decrypt messages in the network.
+access to the private key which is located somewhere on the USB, and 
+they can use the private key to decrypt messages in the network.
 
 2.
 The "gpg2 --verify" command only checks whether the detached 
@@ -22,5 +25,4 @@ gpg2 --verify test
 
 To fix this problem, I could post my public key to the download 
 website so that everyone who downloaded the file can manually check 
-their public key with my public key. In this way, it is not possible 
-for others to change the public key.
+the downloaded public key with my posted public key. In this way, it is not possible for others to change the public key.
