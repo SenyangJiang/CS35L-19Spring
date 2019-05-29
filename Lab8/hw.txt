@@ -25,4 +25,5 @@ gpg2 --verify test
 
 To fix this problem, I could post my public key to the download 
 website so that everyone who downloaded the file can manually check 
-the downloaded public key with my posted public key. In this way, it is not possible for others to change the public key.
+the downloaded public key with my posted public key. In this way, it 
+is not possible for others to change the public key.
