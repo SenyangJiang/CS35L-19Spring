@@ -1,0 +1,130 @@
+Commit my changes from the lab to my lab branch:
+$ git clean -f
+$ git add .
+$ git commit -m "commit to lab branch v3.0-edit"
+
+2.
+Check out version 3.0 of Diffutils into a new branch named "quote":
+$ git checkout v3.0 -b quote
+
+3.
+Install changes to this branch:
+$ patch -p1 < ../quote-3.0-patch.txt
+patching file src/cmp.c
+patching file src/diff.c
+patching file src/diff3.c
+patching file src/dir.c
+patching file src/sdiff.c
+patching file src/util.c
+
+4.
+I learned that "C-x 4 a" adds a new entry to the change log file for 
+the file that is currently edited.
+
+5.
+To compose an appropriate ChangeLog for my patch, I open each of the
+six files patched and add the change log message by "C-x 4 a"
+
+For example:
+$ emacs src/cmp.c
+$ C-x 4 a
+Then enter the message "Change all "`" to "'" in character string constants"
+
+My final ChangeLog entry is:
+2019-06-01  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
+
+        * src/util.c: Change all "`" to "'" in character string constants
+
+        * src/sdiff.c: Change all "`" to "'" in character string constants
+
+        * src/dir.c: Change all "`" to "'" in character string constants
+
+        * src/diff3.c: Change all "`" to "'" in character string constants
+
+        * src/diff.c: Change all "`" to "'" in character string constants
+
+        * src/cmp.c: Change all "`" to "'" in character string constants
+
+6.
+Commit my changes using ChangeLog as the commit message:
+$ git commit -aF ChangeLog
+The -a option automatically stage files that have been modified and deleted
+-F takes the commit message from the given file
+
+7.
+Generate a file "formatted-patch.txt":
+$ git format-patch -1 --stdout > ../formatted-patch.txt
+-1 means prepare the patch from the top commit(the commit that I just did)
+--stdout means print all commits to the standard output in mbox format, instead of creating a file for each one
+
+8.
+Checking out version 3.0 again into a new temporary branch partner:
+$ git checkout v3.0 -b partner
+
+Apply my partner's Scotts patch in the new branch:
+$ git am < ../formatted-patch-scott.txt
+
+The patch does not work on my machine.
+After inspecting the patch, I found there are some problems in his patch:
+1. quote-3.0-patch.txt is included in his patch. Maybe he did not 
+move it into another directory before committing.
+2. files changed in his patch is *.c.orig but not *.c. Maybe he changed the wrong file in the lab section.
+
+9.
+Verify that my ChangeLog entry works:
+$ git checkout quote
+$ make distdir
+
+After the above command, an directory called diffutils-3.0.1-438b is created
+Then check the resulting ChangeLog in this directory:
+$ cd diffutils-3.0.1-438b
+$ emacs ChangeLog
+
+The first entry is as follows:
+2019-06-01  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
+
+        2019-06-01  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
+                * src/util.c: Change all "`" to "'" in character string constants
+
+                * src/sdiff.c: Change all "`" to "'" in character string constants
+
+                * src/dir.c: Change all "`" to "'" in character string constants
+
+                * src/diff3.c: Change all "`" to "'" in character string constants
+
+                * src/diff.c: Change all "`" to "'" in character string constants
+
+                * src/cmp.c: Change all "`" to "'" in character string constants
+This verifys my ChangeLog works
+
+10.
+First I logged out and logged back to the server with X11 enabled
+Then run gitk on ~eggert/src/gnu/emacs:
+$ cd ~eggert/src/gnu/emacs
+$ gitk
+
+Searching through the list of commits on the top window, the newest 
+merge that is not newer than 2015-01-25 is:
+Merge branch 'master' into xwidget 
+Committer: Joakim Verona <joakim@verona.se>  2015-01-25 12:19:27
+
+Roles of subwindows:
+<1> On the top half of the window:
+The window on the left shows the series of commits to the repository 
+with commit messages. 
+A graph shows the relationship between different branches. 
+It also shows SHA1 ID of the commit selected.
+
+The window at the middle shows the corresponding author information 
+(name and email) of the commit
+
+The window on the right shows the corresponding time of the commit
+
+<2> On the bottom half of the window:
+The window on the left shows more detailed description of the commit
+It includes the author, committer, Parent, Child, Branches, Follows, 
+Proceeds and the commit message.
+And also it is often followed by the file changes in diff format. In 
+this case, no file is changed, so I only see the description of the commit.
+
+The window on the right shows a list of files that are changed by this commit.
