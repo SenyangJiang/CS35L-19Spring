@@ -31,7 +31,7 @@ $ C-x 4 a
 Then enter the message "Change all "`" to "'" in character string constants"
 
 My final ChangeLog entry is:
-2019-06-01  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
+2019-06-05  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
 
         * src/util.c: Change all "`" to "'" in character string constants
 
@@ -58,13 +58,28 @@ $ git format-patch -1 --stdout > ../formatted-patch.txt
 --stdout means print all commits to the standard output in mbox format, instead of creating a file for each one
 
 8.
+My partner is Scott Poole UID: 605090318
+
 Checking out version 3.0 again into a new temporary branch partner:
 $ git checkout v3.0 -b partner
 
 Apply my partner's Scotts patch in the new branch:
 $ git am < ../formatted-patch-scott.txt
 
-The patch does not work on my machine.
+Build the resulting system:
+$ ./bootstrap
+$ patch -p0 < ../diffutils-gets.diff
+$ ./configure
+$ make
+$ make check
+
+Then I check the correctness of Scott's patch with the following commands:
+$ src/diff . -
+src/diff: cannot compare `-' to a directory
+$ src/diff --help
+I see the backtick ` is still here
+
+So the patch does not work correctly on my machine.
 After inspecting the patch, I found there are some problems in his patch:
 1. quote-3.0-patch.txt is included in his patch. Maybe he did not 
 move it into another directory before committing.
@@ -75,15 +90,15 @@ Verify that my ChangeLog entry works:
 $ git checkout quote
 $ make distdir
 
-After the above command, an directory called diffutils-3.0.1-438b is created
+After the above command, an directory called diffutils-3.0.1-b6ef is created
 Then check the resulting ChangeLog in this directory:
-$ cd diffutils-3.0.1-438b
+$ cd diffutils-3.0.1-b6ef
 $ emacs ChangeLog
 
 The first entry is as follows:
-2019-06-01  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
+2019-06-05  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
 
-        2019-06-01  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
+        2019-06-05  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
                 * src/util.c: Change all "`" to "'" in character string constants
 
                 * src/sdiff.c: Change all "`" to "'" in character string constants

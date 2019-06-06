@@ -1,9 +1,9 @@
---- quote-3.0-test.txt	2019-06-01 18:47:11.401730000 -0700
-+++ diffutils/quote-3.0-patch.txt	2019-06-01 17:52:49.829759000 -0700
+--- quote-3.0-test.txt	2019-06-05 17:18:56.662255000 -0700
++++ quote-3.0-patch.txt	2019-06-05 17:01:37.455000000 -0700
 @@ -1,7 +1,8 @@
 -diff -pru diffutils-3.0/cmp.c diffutils-3.0-patch/cmp.c
----- diffutils-3.0/cmp.c	2019-06-01 18:41:49.330152000 -0700
--+++ diffutils-3.0-patch/cmp.c	2019-06-01 18:43:49.028032000 -0700
+---- diffutils-3.0/cmp.c	2019-06-05 17:18:36.243181000 -0700
+-+++ diffutils-3.0-patch/cmp.c	2019-06-05 17:18:45.494231000 -0700
 -@@ -115,7 +115,7 @@ try_help (char const *reason_msgid, char
 +diff --git a/src/cmp.c b/src/cmp.c
 +index 2455dc4..e19f013 100644
@@ -27,8 +27,8 @@
     for (f = 0; f < 2; f++)
       {
 -diff -pru diffutils-3.0/diff3.c diffutils-3.0-patch/diff3.c
----- diffutils-3.0/diff3.c	2019-06-01 18:41:49.336146000 -0700
--+++ diffutils-3.0-patch/diff3.c	2019-06-01 18:43:49.033033000 -0700
+---- diffutils-3.0/diff3.c	2019-06-05 17:18:36.249175000 -0700
+-+++ diffutils-3.0-patch/diff3.c	2019-06-05 17:18:45.503230000 -0700
 -@@ -316,9 +316,9 @@ main (int argc, char **argv)
 -   if (argc - optind != 3)
 -     {
@@ -95,10 +95,10 @@
 - 
 -   return diff_result + total;
 -diff -pru diffutils-3.0/diff.c diffutils-3.0-patch/diff.c
----- diffutils-3.0/diff.c	2019-06-01 18:41:49.339143000 -0700
--+++ diffutils-3.0-patch/diff.c	2019-06-01 18:43:49.036033000 -0700
+---- diffutils-3.0/diff.c	2019-06-05 17:18:36.252172000 -0700
+-+++ diffutils-3.0-patch/diff.c	2019-06-05 17:18:45.515232000 -0700
 +diff --git a/src/diff.c b/src/diff.c
-+index cc1b611..5026c95 100644
++index cc1b611..256a984 100644
 +--- a/src/diff.c
 ++++ b/src/diff.c
  @@ -330,7 +330,7 @@ main (int argc, char **argv)
@@ -163,8 +163,8 @@
         if (stat (filename, &cmp.file[dir_arg].stat) != 0)
   	{
 -diff -pru diffutils-3.0/dir.c diffutils-3.0-patch/dir.c
----- diffutils-3.0/dir.c	2019-06-01 18:41:49.342140000 -0700
--+++ diffutils-3.0-patch/dir.c	2019-06-01 18:43:49.039032000 -0700
+---- diffutils-3.0/dir.c	2019-06-05 17:18:36.254171000 -0700
+-+++ diffutils-3.0-patch/dir.c	2019-06-05 17:18:45.521230000 -0700
 -@@ -154,7 +154,7 @@ compare_names (char const *name1, char c
 +diff --git a/src/diff3.c b/src/diff3.c
 +index 0f11fdc..fbfb28b 100644
@@ -248,8 +248,8 @@
   	  longjmp (failed_locale_specific_sorting, 1);
   	}
 -diff -pru diffutils-3.0/sdiff.c diffutils-3.0-patch/sdiff.c
----- diffutils-3.0/sdiff.c	2019-06-01 18:41:49.355127000 -0700
--+++ diffutils-3.0-patch/sdiff.c	2019-06-01 18:43:49.051033000 -0700
+---- diffutils-3.0/sdiff.c	2019-06-05 17:18:36.267158000 -0700
+-+++ diffutils-3.0-patch/sdiff.c	2019-06-05 17:18:45.539231000 -0700
 -@@ -175,7 +175,7 @@ try_help (char const *reason_msgid, char
 +diff --git a/src/sdiff.c b/src/sdiff.c
 +index 4344e8d..5bbecd8 100644
@@ -273,8 +273,8 @@
   
     if (! output)
 -diff -pru diffutils-3.0/util.c diffutils-3.0-patch/util.c
----- diffutils-3.0/util.c	2019-06-01 18:41:49.360123000 -0700
--+++ diffutils-3.0-patch/util.c	2019-06-01 18:43:49.056033000 -0700
+---- diffutils-3.0/util.c	2019-06-05 17:18:36.273151000 -0700
+-+++ diffutils-3.0-patch/util.c	2019-06-05 17:18:45.546230000 -0700
 +diff --git a/src/util.c b/src/util.c
 +index 3be03e9..d18bf38 100644
 +--- a/src/util.c
