@@ -22,28 +22,31 @@ I learned that "C-x 4 a" adds a new entry to the change log file for
 the file that is currently edited.
 
 5.
-To compose an appropriate ChangeLog for my patch, I open each of the
-six files patched and add the change log message by "C-x 4 a"
+To compose an ChangeLog for my patch by adapting the change log from the 
+original patch, I opened quote-patch.txt and write my change log according to it
 
-For example:
-$ emacs src/cmp.c
+I opened emacs and start write the changelog:
+$ emacs
 $ C-x 4 a
-Then enter the message "Change all "`" to "'" in character string constants"
 
 My final ChangeLog entry is:
 2019-06-05  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
 
-        * src/util.c: Change all "`" to "'" in character string constants
+    maint: quote 'like this' or "like this", not `like this'
 
-        * src/sdiff.c: Change all "`" to "'" in character string constants
+    This is in response to a recent change in the GNU coding standards,
+    which now suggest quoting 'like this' or "like this", instead of
+    `like this' or ``like this''.
+    * src/cmp.c (try_help, specify_ignore_initial, usage, main):
+    * src/diff.c (main, try_help, option_help_msgid, specify_value)
+    (compare_files):
+    * src/diff3.c (main, try_help, option_help_msgid, usage)
+    (read_diff):
+    * src/dir.c (compare_names):
+    * src/sdiff.c (try_help, usage, check_child_status, main):
+    * src/util.c (finish_output):
+    Quote 'like this' in output.
 
-        * src/dir.c: Change all "`" to "'" in character string constants
-
-        * src/diff3.c: Change all "`" to "'" in character string constants
-
-        * src/diff.c: Change all "`" to "'" in character string constants
-
-        * src/cmp.c: Change all "`" to "'" in character string constants
 
 6.
 Commit my changes using ChangeLog as the commit message:
@@ -90,26 +93,30 @@ Verify that my ChangeLog entry works:
 $ git checkout quote
 $ make distdir
 
-After the above command, an directory called diffutils-3.0.1-b6ef is created
+After the above command, an directory called diffutils-3.0.1-0853 is created
 Then check the resulting ChangeLog in this directory:
-$ cd diffutils-3.0.1-b6ef
+$ cd diffutils-3.0.1-0853
 $ emacs ChangeLog
 
 The first entry is as follows:
 2019-06-05  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
 
         2019-06-05  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
-                * src/util.c: Change all "`" to "'" in character string constants
+            maint: quote 'like this' or "like this", not `like this'
 
-                * src/sdiff.c: Change all "`" to "'" in character string constants
+            This is in response to a recent change in the GNU coding standards,
+            which now suggest quoting 'like this' or "like this", instead of
+            `like this' or ``like this''.
+            * src/cmp.c (try_help, specify_ignore_initial, usage, main):
+            * src/diff.c (main, try_help, option_help_msgid, specify_value)
+            (compare_files):
+            * src/diff3.c (main, try_help, option_help_msgid, usage)
+            (read_diff):
+            * src/dir.c (compare_names):
+            * src/sdiff.c (try_help, usage, check_child_status, main):
+            * src/util.c (finish_output):
+            Quote 'like this' in output.
 
-                * src/dir.c: Change all "`" to "'" in character string constants
-
-                * src/diff3.c: Change all "`" to "'" in character string constants
-
-                * src/diff.c: Change all "`" to "'" in character string constants
-
-                * src/cmp.c: Change all "`" to "'" in character string constants
 This verifys my ChangeLog works
 
 10.

@@ -1,19 +1,22 @@
-From 79a21b5c940dc32b2ddc0c97ac97cf0cbf0fc731 Mon Sep 17 00:00:00 2001
+From 085300f2f540826a648c2091c82bd776f6934db8 Mon Sep 17 00:00:00 2001
 From: Senyang Jiang <classsen@lnxsrv09.seas.ucla.edu>
-Date: Wed, 5 Jun 2019 17:31:33 -0700
+Date: Wed, 5 Jun 2019 21:14:42 -0700
 Subject: [PATCH] 2019-06-05  Senyang Jiang  <classsen@lnxsrv09.seas.ucla.edu>
 
-	* src/util.c: Change all "`" to "'" in character string constants
+    maint: quote 'like this' or "like this", not `like this'
 
-	* src/sdiff.c: Change all "`" to "'" in character string constants
-
-	* src/dir.c: Change all "`" to "'" in character string constants
-
-	* src/diff3.c: Change all "`" to "'" in character string constants
-
-	* src/diff.c: Change all "`" to "'" in character string constants
-
-	* src/cmp.c: Change all "`" to "'" in character string constants
+    This is in response to a recent change in the GNU coding standards,
+    which now suggest quoting 'like this' or "like this", instead of
+    `like this' or ``like this''.
+    * src/cmp.c (try_help, specify_ignore_initial, usage, main):
+    * src/diff.c (main, try_help, option_help_msgid, specify_value)
+    (compare_files):
+    * src/diff3.c (main, try_help, option_help_msgid, usage)
+    (read_diff):
+    * src/dir.c (compare_names):
+    * src/sdiff.c (try_help, usage, check_child_status, main):
+    * src/util.c (finish_output):
+    Quote 'like this' in output.
 ---
  src/cmp.c   | 12 ++++++------
  src/diff.c  | 28 ++++++++++++++--------------
